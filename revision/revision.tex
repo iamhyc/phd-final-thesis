@@ -1,0 +1,261 @@
+\documentclass[12pt, onecolumn]{IEEEtran}
+
+\usepackage{cite}
+% \usepackage[noend]{algpseudocode}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{dcolumn}
+\usepackage[utf8]{inputenc}
+\usepackage{soul}
+\usepackage{array}
+\usepackage{tabulary}
+\usepackage{enumerate}
+%---------------------------------------------------------------%
+\newtheorem{definition}{Definition}   % 
+\theoremstyle{definition}             % alter theorem style: <definition>
+\newtheorem{program}{Program}         % [program]
+\newtheorem{assumption}{Assumption}   % [assumption]
+\newtheorem{example}{Example}         % [example]
+\newtheorem{Algorithm}{Algorithm}     % [algorithm]
+\newtheorem{policy}{Policy}           % [policy]
+\newtheorem{problem}{Problem}         % [problem]
+\theoremstyle{remark}                 % alter theorem style: <remark>
+\newtheorem{remark}{Remark}           % [remark]
+\theoremstyle{plain}                  % alter theorem style: <plain>
+\newtheorem{theorem}{Theorem}         % [theorem]
+\newtheorem{lemma}{Lemma}             % [lemma]
+\newtheorem{corollary}{Corollary}     % [corollary]
+%---------------------------------------------------------------%
+\newcommand{\eq}{=}
+\newcommand{\domZ}{\mathbb{Z}_{*}}
+\newcommand{\domP}{\mathbb{Z}_{*}}
+\newcommand{\vecOne}{\mathbf{1}}
+\newcommand{\ind}{\mathbf{I}}
+\newcommand{\mat}{\mathbf}
+\newcommand{\Poisson}{\text{Poisson}}
+\newcommand{\Bernoulli}{\text{Bernoulli}}
+\newcommand{\define}{\triangleq}
+\newcommand{\leadto}{\Rightarrow}
+\newcommand{\vecG}{\boldsymbol}
+\renewcommand{\vec}{\mathbf}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\norm}{|}{|}
+\DeclarePairedDelimiter{\Inorm}{\|}{\|_1}
+\DeclarePairedDelimiter{\Paren}{\bigg(}{\bigg)}
+\DeclarePairedDelimiter{\Bracket}{\bigg[}{\bigg]}
+\DeclarePairedDelimiter{\Brace}{\bigg\{}{\bigg\}}
+%
+\newcommand{\spaceblank}{\vskip 4mm}
+\renewcommand{\baselinestretch}{1.4}
+%---------------------------------------------------------------%
+\newcommand{\AP}{\dagger}
+\newcommand{\ES}{\ddagger}
+\newcommand{\apSet}{\mathcal{K}}
+\newcommand{\esSet}{\mathcal{M}}
+\newcommand{\ccSet}{\mathcal{X}}
+\newcommand{\jSpace}{\mathcal{J}}
+\newcommand{\Stat}{\mathbf{S}}
+\newcommand{\Obsv}{\mathcal{Y}}
+\newcommand{\Policy}{\vecG{\Omega}}
+\newcommand{\Delay}{\vecG{\mathcal{D}}}
+\newcommand{\Baseline}{\vecG{\Pi}}
+\newcommand{\algname}{\texttt{DecMDP}}
+
+\newcommand{\comments}[1]{\spaceblank\noindent{\leavevmode\color{black}\em#1}}
+\newcommand{\response}[1]{\spaceblank{\leavevmode\color{blue}#1}}
+\newcommand{\thankyou}{Thank you for the comment}
+\newcommand{\delete}[2]{}
+\newcommand{\needref}[1]{{\leavevmode\color{red}[#1]}}
+%
+\newcommand{\wangr}[1]{{\leavevmode\color{orange}#1}}
+\newcommand{\hongyc}[1]{{\leavevmode\color{purple}#1}}
+\newcommand{\hongycCHK}[1]{{\leavevmode\color{black}#1}}
+\newcommand{\tann}[1]{{\leavevmode\color{red}#1}}
+\newcommand{\tannCHK}[1]{{\leavevmode\color{black}#1}}
+%---------------------------------------------------------------%
+
+\begin{document}
+    \title{Reply to Examiners' Comments on the Final Thesis}
+    \author{}
+    \maketitle
+
+    %---------------------------------------------------------------%
+    Thank you for the comments and suggestions on the final thesis.
+    They are very helpful for improving the quality of the thesis.
+    I have carefully revised the thesis according to the comments and suggestions.
+    In the revised thesis, the main changes are emphasized in {\color{blue}blue} for the reading convenience.
+    The major changes are summarized as follows:
+    \begin{enumerate}[{1.}]
+        \item In response to \textbf{Comment R1-2}, the thesis has been reorganized into two parts, each containing two chapters. Part I, ``Low-complexity Algorithm Design for Multi-agent Edge Computing Systems'', includes Chapter 2 and Chapter 3. Part II, ``Low-complexity Algorithm Design for Multi-agent Edge Learning Systems'', includes Chapter 4 and Chapter 5.
+        \item In response to \textbf{Comment R1-3}, \textbf{R1-4}, \textbf{R2-1} and \textbf{R3-i.e}, the Section 1.3 Thesis Overview has been revised to highlight the relationship between Chapter 2 and Chapter 3, Chapter 4 and Chapter 5.
+        \item Following the guidance of email "Examination Result of PhD Thesis", the acknowledgement section has been revised to highlight the support from HKU and SUSTech.
+        \item Following the suggestion and comments from the oral examination, a new chapter {\color{blue}(LeapFi: A Learning-based Application-oriented IEEE 802.11 System Channel Access Framework)} has been added as the Chapter 5 of the thesis. The abstract, introduction (Chapter 1) and conclusions (Chapter 6) parts have been revised to reflect the new chapter.
+    \end{enumerate}
+    The detailed responses to the comments are provided in the following sections.
+    %---------------------------------------------------------------%
+
+    %-------------------------------- Response to Examiner 1 -------------------------------%
+    \section{Response to Examiner 1}
+    \comments{
+        \textbf{Comment R1-1:} There are many typos in the current manuscript. A careful proofread throughout the thesis is essential for the final version.
+    }
+    \response{
+        \textbf{Response R1-1:} \thankyou.
+        I have carefully proofread the whole thesis and corrected all the typos as far as I have found.
+    }
+
+    \comments{
+        \textbf{Comment R1-2:} The main body of the thesis is organized as three Parts, each containing one single Chapter. Such a structure seems unnecessary.
+    }
+    \response{
+        \textbf{Response R1-2:} \thankyou.
+        The thesis has been reorganized into two parts, each containing two chapters.
+        Part I, ``Low-complexity Algorithm Design for Multi-agent Edge Computing Systems'', which         includes Chapter 2 and Chapter 3.
+        Part II, ``Low-complexity Algorithm Design for Multi-agent Edge Learning Systems'', which includes Chapter 4 and Chapter 5.
+    }
+
+    \comments{
+        \textbf{Comment R1-3:} The difference between the problem settings in Chapter 2 and Chapter 3 can be clarified more clearly, e.g., by comparing Figure 2.0.1 and Figure 3.0.1. Also, it would be also beneficial to emphasize the unique challenges when extending the centralized solution to the distributed one, perhaps in Chapter 1.
+    }
+    \response{
+        \textbf{Response R1-3:} \thankyou.
+        I have added the text to highlight the relationship between Chapter 2 and Chapter 3 in Section 1.3 Thesis Overview. In short, they share the same job dispatching problem setting but the decentralized algorithm in Chapter 3 further introduces a information sharing mechanism, which leads to a partially observable MDP (POMDP) problem formulation.
+    }
+
+    \comments{
+        \textbf{Comment R1-4:} Chapter 4 particularly focuses on communication scheduling problem for federated learning in vehicular networks. What is its relationship to the previous two chapters.
+    }
+    \response{
+        \textbf{Response R1-4:} \thankyou.
+        I have added the text to highlight the purpose of Chapter 4 (and Chapter 5) in Section 1.3 Thesis Overview.
+    }
+    %-------------------------------- Response to Examiner 1 -------------------------------%
+
+
+    %-------------------------------- Response to Examiner 2 -------------------------------%
+    \section{Response to Examiner 2}
+    \comments{
+        \textbf{Comment R2-1:} The relationship between the first two works and the third work is not adequately described. The author should provide more elaboration on their relationship.
+    }
+    \response{
+        \textbf{Response R2-1:} \thankyou.
+        I have added the text to highlight the relationship in Section 1.3 Thesis Overview.
+    }
+
+    \comments{
+        \textbf{Comment R2-2:} The saying "distributed solution framework, MDP solution algorithm" should better be revised to "distributed framework MDP algorithm". The algorithm itself is a solution.
+    }
+    \response{
+        \textbf{Response R2-2:} \thankyou.
+        I have revised the expressions accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R2-3:} Descriptions for Figure 2.3.1-2.3.4 are in section 2.4, therefore, the figures should be inserted in section 2.4 and the number should be changed to figure 2.4.1-2.4.4.
+    }
+    \response{
+        \textbf{Response R2-3:} \thankyou.
+        I have placed the figures in the correct position.
+    }
+
+    %NOTE: normal issue
+    \comments{
+        \textbf{Comment R2-4:} The simulation results in section 4.7.2 should be described and analyzed.
+    }
+    \response{
+        \textbf{Response R2-4:} \thankyou.
+        The discussion of the results has been updated accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R2-5:} Typos: SUStech --\textgreater SUSTech, [2]. --\textgreater [2], Figure.3.2.1 --\textgreater Figure 3.2.1.
+    }
+    \response{
+        \textbf{Response R2-5:} \thankyou.
+        I have corrected the typos as suggested, and carefully proofread the whole thesis.
+    }
+    %-------------------------------- Response to Examiner 2 -------------------------------%
+
+
+    %-------------------------------- Response to Examiner 3 -------------------------------%
+    \section{Response to Examiner 3}
+    \comments{
+        \textbf{Comment R3-i.a:} The thesis studies an important problem in edge computing. The proposed approximate MDP method needs substantial efforts to be understood. Meanwhile, this also brings many obstacles to readers who are not familiar with AMDP. I strongly recommend the author to give more illustrating examples of the proposed algorithms/methods. In addition, instead of giving the analytical results directly, giving the detailed analyses (step by step), such as the time complexity and the performance bound for all the proposed algorithms/methods, should be necessary.
+    }
+    \response{
+        \textbf{Response R3-i.a:} \thankyou.
+        The fundamental basics of AMDP is provided in Section 1.2.2 Markov Decision Process, and the details of analytical results (such as time complexity and performance bound) are provided in the proof sections for each chapter.
+    }
+
+    \comments{
+        \textbf{Comment R3-i.b:} There are few references, and some arguments need to be supported by evidence, such as the argument "In the edge computing systems, ... is the major challenges" in Section 1.1 (P1), and "Problem 2 is NP-hard ..." on P32.
+    }
+    \response{
+        \textbf{Response R3-i.b:} \thankyou.
+        The references for the arguments have been updated accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R3-i.c:} It is better to give the specific complexity comparison between the existing scheme and the proposed scheduling scheme in the contribution part of Chapter 2 (p19), and provide the performance optimization results of numerical simulations.
+    }
+    \response{
+        \textbf{Response R3-i.c:} \thankyou.
+        The computational complexity of the proposed algorithm is $O(KM)$, while the other existing schemes are trivially $O(1)$. The optimization of the numerical simulations is trivially applied via exhaustive search, as the complexity $O(KM)$ implied.
+    }
+
+    \comments{
+        \textbf{Comment R3-i.d:} The performance evaluation part (P35) of Chapter 2 is relatively weak, and it is better to add more evaluation and analysis.
+    }
+    \response{
+        \textbf{Response R3-i.d:} \thankyou.
+        Chapter 2 introduces a preceding work to Chapter 3, which compares the proposed algorithm with some heuristic algorithms.
+        Chapter 3 is an extension of Chapter 2 which adds more evaluation and analysis. 
+    }
+
+    \comments{
+        \textbf{Comment R3-i.e:} Chapter 2 is on a centralized approach, which does not fit the thesis title (decentralized).
+    }
+    \response{
+        \textbf{Response R3-i.e:} \thankyou.
+        Chapter 2 introduces a preceding work to Chapter 3, which elaborates on the background and motivation of the importance and challenges of the job dispatching problem in edge computing systems.
+        Chapter 3 further extends the centralized approach to a decentralized one and highlights the new challenges of outdated and incomplete information.
+        I have added the text to highlight the relationship between Chapter 2 and Chapter 3 in Section 1.3 Thesis Overview.
+    }
+
+    %=======================================================%
+    \comments{
+        \textbf{Comment R3-ii.a:} The format of conference papers in references should be consistent. Specifically, whether to use abbreviations (such as [78] and [73]), whether the abbreviation is placed before or after, and whether brackets are used (such as [22], [25] and [78]), whether to indicate the location of the meeting (such as [78] and others)
+    }
+    \response{
+        \textbf{Response R3-ii.a:} \thankyou.
+        I have revised the format of the references accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R3-ii.b:} Regarding Eq. Whether to use the equation number (such as Equation 2.2.7 and the equation after it, p25), and the punctuation position of the equation (such as P7, the second equation)
+    }
+    \response{
+        \textbf{Response R3-ii.b:} \thankyou.
+        I have revised the format of the equations accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R3-ii.c:} Regarding the figure. The figure format should be consistent. Specifically, the figures in Chapter 2 and 4 are titled "Fig.", while those in Chapter 3 are titled "Figure". In addition, Figure 2.3.1 (P32) is too far away from its first reference in the text (P36); the subfigure title of Figure 3.5.5 (P70) is not centered; the font size of the horizontal and vertical coordinate title of Figure 2.3.2 (P33) is too small.
+    }
+    \response{
+        \textbf{Response R3-ii.c:} \thankyou.
+        I have revised the format of the figures accordingly.
+    }
+
+    \comments{
+        \textbf{Comment R3-ii.d:} Some grammar and writing typos are listed below: ...
+    }
+    \response{
+        \textbf{Response R3-ii.d:} \thankyou.
+        I have corrected the typos as suggested, and carefully proofread the whole thesis.
+    }
+    %-------------------------------- Response to Examiner 3 -------------------------------%
+\end{document}

@@ -1,0 +1,349 @@
+\documentclass[phd,12pt]{hkuthesis}
+%%
+\usepackage{booktabs} % Table appearance
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{dsfont}
+\usepackage{mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{dcolumn}
+\usepackage[utf8]{inputenc}
+\usepackage{soul}
+\usepackage{array}
+\usepackage{tabulary}
+\usepackage{bbm}
+\usepackage[linesnumbered,vlined,ruled]{algorithm2e}
+\usepackage{algorithmic}
+\usepackage{mathrsfs}
+%% Bibliography
+\usepackage[bibstyle=ieee,citestyle=numeric]{biblatex}
+%% Images
+\usepackage{graphicx}
+\graphicspath{{images/}}
+%% Hyperref
+\usepackage[
+    colorlinks=true, urlcolor=blue,
+    linkcolor=blue, citecolor=blue,
+]{hyperref}
+\usepackage{cleveref}
+%---------------------------------------------------------------%
+
+
+%---------------------------------------------------------------%
+%% Basic Math Abbreviations
+\newcommand{\slide}[1]{{\mathbf{#1}}} %\overset{\rightarrow}
+\newcommand{\eq}{=}
+\newcommand{\domR}{\mathbb{R}}
+\newcommand{\domZ}{\mathbb{Z}_{*}}
+\newcommand{\domP}{\mathbb{Z}_{*}}
+\newcommand{\vecOne}{\mathbf{1}}
+\newcommand{\indicator}{\mathbbm{1}}
+\newcommand{\mat}{\mathbf}
+\newcommand{\Poisson}{\text{Poisson}}
+\newcommand{\Bernoulli}{\text{Bernoulli}}
+\newcommand{\define}{\triangleq}
+\newcommand{\leadto}{\Rightarrow}
+\newcommand{\vecG}{\boldsymbol}
+\renewcommand{\vec}{\mathbf}
+\newcommand{\T}{{\hat{T}}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\W}{\tilde{W}}
+\renewcommand{\d}{\mathpzc{d}}
+\renewcommand{\u}{\mathpzc{u}}
+\renewcommand{\L}{\mathcal{L}}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\norm}{|}{|}
+\DeclarePairedDelimiter{\Inorm}{\|}{\|_1}
+\DeclarePairedDelimiter{\paren}{(}{)}
+\DeclarePairedDelimiter{\Paren}{\bigg(}{\bigg)}
+\DeclarePairedDelimiter{\bracket}{[}{]}
+\DeclarePairedDelimiter{\Bracket}{\bigg[}{\bigg]}
+\DeclarePairedDelimiter{\Brace}{\bigg\{}{\bigg\}}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+%---------------------------------------------------------------%
+%% the pretty \widebar symbol: 
+\makeatletter
+\let\save@mathaccent\mathaccent
+\newcommand*\if@single[3]{%
+  \setbox0\hbox{${\mathaccent"0362{#1}}^H$}%
+  \setbox2\hbox{${\mathaccent"0362{\kern0pt#1}}^H$}%
+  \ifdim\ht0=\ht2 #3\else #2\fi
+  }
+%The bar will be moved to the right by a half of \macc@kerna, which is computed by amsmath:
+\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
+%If there's a superscript following the bar, then no negative kern may follow the bar;
+%an additional {} makes sure that the superscript is high enough in this case:
+\newcommand*\widebar[1]{\@ifnextchar^{{\wide@bar{#1}{0}}}{\wide@bar{#1}{1}}}
+%Use a separate algorithm for single symbols:
+\newcommand*\wide@bar[2]{\if@single{#1}{\wide@bar@{#1}{#2}{1}}{\wide@bar@{#1}{#2}{2}}}
+\newcommand*\wide@bar@[3]{%
+  \begingroup
+  \def\mathaccent##1##2{%
+%Enable nesting of accents:
+    \let\mathaccent\save@mathaccent
+%If there's more than a single symbol, use the first character instead (see below):
+    \if#32 \let\macc@nucleus\first@char \fi
+%Determine the italic correction:
+    \setbox\z@\hbox{$\macc@style{\macc@nucleus}_{}$}%
+    \setbox\tw@\hbox{$\macc@style{\macc@nucleus}{}_{}$}%
+    \dimen@\wd\tw@
+    \advance\dimen@-\wd\z@
+%Now \dimen@ is the italic correction of the symbol.
+    \divide\dimen@ 3
+    \@tempdima\wd\tw@
+    \advance\@tempdima-\scriptspace
+%Now \@tempdima is the width of the symbol.
+    \divide\@tempdima 10
+    \advance\dimen@-\@tempdima
+%Now \dimen@ = (italic correction / 3) - (Breite / 10)
+    \ifdim\dimen@>\z@ \dimen@0pt\fi
+%The bar will be shortened in the case \dimen@<0 !
+    \rel@kern{0.6}\kern-\dimen@
+    \if#31
+      \overline{\rel@kern{-0.6}\kern\dimen@\macc@nucleus\rel@kern{0.4}\kern\dimen@}%
+      \advance\dimen@0.4\dimexpr\macc@kerna
+%Place the combined final kern (-\dimen@) if it is >0 or if a superscript follows:
+      \let\final@kern#2%
+      \ifdim\dimen@<\z@ \let\final@kern1\fi
+      \if\final@kern1 \kern-\dimen@\fi
+    \else
+      \overline{\rel@kern{-0.6}\kern\dimen@#1}%
+    \fi
+  }%
+  \macc@depth\@ne
+  \let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
+  \mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
+  \macc@set@skewchar\relax
+  \let\mathaccentV\macc@nested@a
+%The following initialises \macc@kerna and calls \mathaccent:
+  \if#31
+    \macc@nested@a\relax111{#1}%
+  \else
+%If the argument consists of more than one symbol, and if the first token is
+%a letter, use that letter for the computations:
+    \def\gobble@till@marker##1\endmarker{}%
+    \futurelet\first@char\gobble@till@marker#1\endmarker
+    \ifcat\noexpand\first@char A\else
+      \def\first@char{}%
+    \fi
+    \macc@nested@a\relax111{\first@char}%
+  \fi
+  \endgroup
+}
+\makeatother
+%---------------------------------------------------------------%
+%% Extended Block Definition
+\newtheorem{definition}{Definition}   % 
+\theoremstyle{definition}             % alter theorem style: <definition>
+\newtheorem{program}{Program}         % [program]
+\newtheorem{assumption}{Assumption}   % [assumption]
+\newtheorem{example}{Example}         % [example]
+\newtheorem{Algorithm}{Algorithm}     % [algorithm]
+\newtheorem{policy}{Policy}           % [policy]
+\newtheorem{problem}{Problem}         % [problem]
+\theoremstyle{remark}                 % alter theorem style: <remark>
+\newtheorem{remark}{Remark}           % [remark]
+\theoremstyle{plain}                  % alter theorem style: <plain>
+\newtheorem{theorem}{Theorem}         % [theorem]
+\newtheorem{lemma}{Lemma}             % [lemma]
+\newtheorem{corollary}{Corollary}     % [corollary]
+%---------------------------------------------------------------%
+%% Extended Comment Commands
+\newcommand{\fixit}[1]{{\leavevmode\color{red}#1}}
+\newcommand{\revise}[1]{#1} %{{\leavevmode\color{blue}#1}}
+\newcommand{\nice}[1]{{\leavevmode\color{purple}#1}}
+\newcommand{\accept}[1]{#1}
+\newcommand{\delete}[2]{}
+\newcommand{\needref}[1]{{\leavevmode\color{red}[#1]}}
+%---------------------------------------------------------------%
+
+
+%---------------------------------------------------------------%
+%% Chapter1 Terminologies
+\newcommand{\Action}{\mathbf{A}}
+\newcommand{\Baseline}{\mathbf{\Pi}}
+\newcommand{\Stat}{\mathbf{S}}
+\newcommand{\Policy}{\vecG{\Omega}}
+
+%---------------------------------------------------------------%
+%% Chapter2 Terminologies
+\newcommand{\tjSet}{\mathcal{W}}
+\newcommand{\carSet}{\mathcal{M}}
+% \newcommand{\Stat}{\mathbf{S}} %(duplicated)
+% \newcommand{\Policy}{\vecG{\Omega}} %(duplicated)
+\newcommand{\TransD}{\mathbf{D}}
+\newcommand{\Diag}{\text{Diag}}
+\newcommand{\IAV}{DCV}
+\newcommand{\IAVs}{\IAV{s}}
+\newcommand{\IAVFullname}{data collection vehicle}
+\newcommand{\IAVFullnames}{\IAVFullname{s}}
+\newcommand{\fwName}{FedCars}
+%---------------------------------------------------------------%
+%% Chapter3_prev Terminologies
+%% Chapter3 Terminologies
+\newcommand{\AP}{\dagger}
+\newcommand{\ES}{\ddagger}
+\newcommand{\apSet}{\mathcal{K}}
+\newcommand{\esSet}{\mathcal{M}}
+\newcommand{\ccSet}{\mathcal{X}}
+\newcommand{\jSpace}{\mathcal{J}}
+% \newcommand{\Stat}{\mathbf{S}} %(duplicated)
+\newcommand{\Obsv}{\mathcal{Y}}
+% \newcommand{\Policy}{\vecG{\Omega}} %(duplicated)
+\newcommand{\Delay}{\vecG{\mathcal{D}}}
+% \newcommand{\Baseline}{\vecG{\Pi}} %(duplicated)
+\newcommand{\Dalgname}{\texttt{DecMDP}}
+\newcommand{\brlatency}{signaling latency}
+%---------------------------------------------------------------%
+%% Chapter3_after Terminologies
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\algName}{LeapFi}
+\newcommand{\algFullName}{{\bf Le}arning-based {\bf ap}plication-oriented Wi-{\bf Fi}}
+\newcommand{\BE}{\mathtt{BE}}
+\newcommand{\BK}{\mathtt{BK}}
+\newcommand{\VI}{\mathtt{VI}}
+\newcommand{\VO}{\mathtt{VO}}
+
+\newcommand{\devSet}{\mathcal{U}}
+\newcommand{\linkset}{\mathcal{L}}
+\newcommand{\taskset}{\mathcal{T}}
+\newcommand{\thruTS}{\taskset_{i,j}^{(f)}}
+\newcommand{\rttTS}{\taskset_{i,j}^{(r)}}
+
+\newcommand{\avgRTT}{\bar{d}}
+\newcommand{\avgThru}{\bar{r}}
+\newcommand{\varRTT}{\sigma_{d}}
+\newcommand{\varThru}{\sigma_{r}}
+
+\newcommand{\observation}{\mathbf{O}}
+\newcommand{\action}{\mathcal{A}}
+\newcommand{\actionSpace}{\mathscr{A}}
+\newcommand{\state}{\mathbf{S}}
+\newcommand{\extendState}{\hat{\state}}
+\newcommand{\refineState}{\Tilde{\state}}
+\newcommand{\averageCost}{\bar{C}}
+\newcommand{\additionCost}{\mathrm{C}}
+
+\newcommand{\eleRTT}{ d_{i,j}^{(m)} }
+\newcommand{\eleRTTClassify}{ d_{i,j}^{(m,p)} }
+\newcommand{\eleRTTAlt}{ d_{i,j}^{(n)} }
+\newcommand{\eleThru}{ r_{i,j}^{(m)} }
+\newcommand{\eleThruClassify}{ r_{i,j}^{(m,p)} }
+\newcommand{\elePreRTT}{ \hat{d}_{i,j}^{(n)} }
+\newcommand{\elePreThru}{ \hat{r}_{i,j}^{(m)} }
+\newcommand{\eleThruLimit}{ {b}_{i,j}^{(m)} }
+\newcommand{\eleRTTLimit}{ \mathrm{D}_{i,j}^{(m)} }
+
+\newcommand{\dataSet}{\mathscr{S}}
+\newcommand{\trainningDataSet}{\mathscr{S}^{s}}
+\newcommand{\classifyDataSet}{\mathscr{S}^{p}}
+\newcommand{\trainningDataSetwithRawPerInd}{\Tilde{\mathscr{S}}^{s}}
+\newcommand{\rawPerRegion}{\hat{\psi}}
+\newcommand{\refinePerRegion}{\Tilde{\psi}}
+\newcommand{\classifyAction}{\action^{p}}
+\newcommand{\classifyObs}{\observation^{p}}
+\newcommand{\trainObs}{\observation^{s}}
+\newcommand{\trainAction}{\action^{s}}
+
+\newcommand{\iterOver}[2]{#1 \in{#2}}
+\newcommand{\iterLink}{\iterOver{(i,j)}{\linkset}}
+\newcommand{\iterTaskRTT}{\iterOver{{m}}{\rttTS}}
+\newcommand{\iterTaskRTTAlt}{\iterOver{{n}}{\rttTS}}
+\newcommand{\iterTaskThru}{\iterOver{{m}}{\thruTS}}
+\newcommand{\iterFromTo}[2]{#1, \ldots, #2}
+\newcommand{\iterCC}{\iterFromTo{\mu_1}{\mu_{K}}}
+\newcommand{\iterCCOpt}{\iterFromTo{\mu_1^*}{\mu_{K}^*}}
+\newcommand{\iterFromPassTo}[3]{#1, #2, \ldots, #3}
+\newcommand{\iterDataSet}{\iterFromPassTo{1}{2}{M}}
+\newcommand{\iterDeviceSet}{\iterFromPassTo{0}{1}{U-1}}
+\newcommand{\iterCtlDeviceSet}{\iterFromPassTo{1}{2}{U-1}}
+\newcommand{\iterCCIdx}{\iterFromPassTo{1}{2}{K}}
+
+\newcommand{\imitatorLoss}{ L^I }
+\newcommand{\ctlLoss}{ L^q }
+\newcommand{\uniformDis}{ \mathrm{Unif} }
+\newcommand{\netParam}{ \boldsymbol{\theta} }
+\newcommand{\inetParam}{ \netParam^w }
+\newcommand{\qnetParam}{ \netParam^q }
+\newcommand{\qtnetParam}{ \netParam^{q,-}}
+% \newcommand{\firExpLink}{ u_1,u_0 }
+% \newcommand{\secExpLink}{ u_2,u_0 }
+% \newcommand{\thiExpLink}{ u_3,u_0 }
+%---------------------------------------------------------------%
+%% Bibliography
+\addbibresource{references/IEEEabrv.bib}
+\addbibresource{references/references.bib}
+\addbibresource{references/chapter1.bib}
+\addbibresource{references/chapter2.bib}
+\addbibresource{references/chapter3_prev.bib}
+\addbibresource{references/chapter3.bib}
+\addbibresource{references/chapter3_after.bib}
+%---------------------------------------------------------------%
+
+\newcommand{\MyThesisTitle}{
+    % Decentralized Dynamic Programming Algorithm Design for Edge Computing and Edge Learning Systems
+    % Handling Uncertainties in Multi-agent Edge Computing Systems in Decentralized Manner: Theorems, Frameworks, and Applications
+    Handling Uncertainties in Multi-agent Edge Computing Systems in Decentralized Manner: An Approximate MDP Approach
+}
+\newcommand{\MyName}{Yuncong Hong}
+% Thesis and author metadata
+\title{{\MyThesisTitle}}
+\author{{\MyName}} %\href{mailto:ychong@cs.hku.hk}
+\qualifications{\Large
+    \href{https://www.cs.hku.hk}{Department of Computer Science}\\
+    \vspace*{-1em}
+    \href{https://www.hku.hk}{The University of Hong Kong}\\
+    Supervised by\\
+    \vspace*{-1em}
+    Prof. \href{mailto:fcmlau@cs.hku.hk}{Francis C.M. Lau}\\
+    Co-Supervised by\\
+    \vspace*{-1em}
+    Prof. \href{mailto:wang.r@sustech.edu.cn}{Rui Wang}
+}
+\date{September, 2023}
+
+% Setup PDF metadata
+\AtBeginDocument{
+    \hypersetup{pdftitle=\MyThesisTitle}
+    \hypersetup{pdfauthor=\MyName}
+    \setlength\parindent{0pt}
+}
+
+\begin{document}
+    %% Front Matter
+    \begin{frontmatter}
+        \abstract[498]		% Word count as optional argument
+        \titlepage
+        % \dedication 		% Optional
+        \declaration
+        \acknowledgements
+        \publications
+        \tableofcontents
+        \listoffigures
+        \listoftables
+    \end{frontmatter}
+
+    %% Chapters
+    \begin{chapters}
+        \input{chapters/Chapter1}
+        %%% Part I
+        \part{Low-complexity Algorithm Design for Multi-agent Edge Computing Systems} % Infinite-horizon Large-scale MDP
+        \label{part_1}
+        \input{chapters/Chapter3_prev}
+        \input{chapters/Chapter3}
+        %%% Part II
+        \part{Low-complexity Algorithm Design for Multi-agent Edge Learning Systems} %Infinite-horizon Large-scale MDP
+        \label{part_2}
+        \input{chapters/Chapter2}
+        \input{chapters/Chapter3_after.tex}
+        %%% Conclusion
+        \input{chapters/Chapter4}
+    \end{chapters}
+
+    %% Back Matter
+    \begin{backmatter}
+        \printbibliography[heading=bibintoc,title=Bibliography]
+    \end{backmatter}
+\end{document}

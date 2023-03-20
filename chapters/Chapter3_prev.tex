@@ -1,0 +1,546 @@
+\chapter{Cooperative Job Dispatching in Edge Computing Network with Unpredictable Uploading Delay}
+\label{ch3_prev}
+
+Edge computing is gaining more and more attention with the prosperity of computation-intensive and delay-sensitive mobile applications.
+It is a promising technology to support the emerging mobile applications, such as face recognition, speech recognition and high-definition video rendering, which are computation-intensive and delay-sensitive.
+Due to the limited computation resource and battery capacity, it is promising for the mobile devices to upload their computation-intensive jobs to edge servers with much more powerful computation capability. In this chapter, we focus on the jobs dispatching optimization between multiple access points (APs) and edge servers via a network with random job uploading delay. Unlike cellular communications, the uploading delay between APs and edge servers is hard to control due to unpredictable traffics in the network. We shall address the dispatching optimization in this scenario via a novel approximation Markov decision process (MDP) method, whose performance can be analytically bounded.
+
+The scheduling algorithm design for edge computing systems has attracted tremendous research attentions.
+There have been a number of works considering the radio resource management for mobile edge computing systems. For example, the authors in \cite{Junzhang2016} minimized the average energy consumption in a single-user system via Lyapunov optimization approach. In \cite{KBHuang2015}, the authors derived the closed-form expressions of job uploading decisions and the allocation of computation and radio resources in a single-user system powered by wireless energy transfer.
+Considering the dynamic of CPU state (busy or idle) at the edge server, the authors in \cite{KBHuang2019} proposed a dynamic job offloading algorithm to minimize the average energy consumption in single-user system via finite-horizon MDP.
+
+There are also a significant number of works considering the edge computing scenarios with multiple mobile users and single edge server. For example, the radio and computation resources allocation to guarantee user fairness and delay constraint in a multi-user system was considered in \cite{Du2018}. The authors in \cite{KBHuang2016} proposed an optimal threshold-based uploading algorithm for mobile users. In order to minimize a weighted summation of total energy consumption and uploading delay, the authors in \cite{XuChen2016} proposed a distributed job uploading algorithm based on game theory. All these works considered the scheduling algorithm design in a wireless cell with single edge server. Moreover, the authors considered joint optimization of service caching and job uploading with multiple edge servers in \cite{jieXu2018}. 
+Due to the limited storage space, edge servers can not process all job types.  An online and decentralized scheduling algorithm is proposed to minimize the computation delay under total computation energy constraint.
+All the above works consider the scheduling of wireless transmission from mobile users to APs. In fact, there is also dispatching issue between APs and edge servers. For example, in a computer network, the job uploading delay from users or APs to edge servers is not negligible \cite{tan-online,liang2017}. Moreover, the delay may be unpredictable, as it may be jammed by other traffics.
+
+There are also some works on the jobs dispatching design in computer networks. For example, without any job arrival information, the authors in \cite{tan-online} designed an online algorithm for jobs dispatching in edge computing systems to achieve a good competitive ratio. Given a consistent network transmission delay, the edge server placement and static jobs dispatching are jointly optimized in \cite{liang2017} to minimize overall job uploading delay. The uploading delay and job computation time are assumed to be constant in \cite{tan-online,liang2017}. 
+In practice, however, the network traffic between APs and edge servers is usually complicated.
+The job uploading path is usually established with dynamic routing algorithm, unpredictable backlogs on the routers, and burst network flows from other services \cite{liang2015}.
+As a result, it may be impractical to assume that the uploading delay is deterministic in edge computing systems, and new algorithm design framework addressing random uploading delay becomes necessary.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{chapter3_prev/system-model.pdf}
+    \caption{Illustration of the edge computing network.}
+    \label{fig:ch3_prev-system}
+\end{figure*}
+
+Finally, MDP is a powerful tool for resource allocation of communication networks with random transition of system state. For example,  
+infinite-horizon average cost MDP has been used in delay-aware radio resource management \cite{Ruiwang2011,Cui2012,Ruiwang2013}. Joint optimization of file placement and delivery in cache-assisted wireless networks can be solved via finite-horizon MDP \cite{Lv2018-icc,Lv2018-gc,Lv2019}. Various value function approximation methods have been used in \cite{Ruiwang2011,Cui2012,Ruiwang2013,Lv2018-icc,Lv2018-gc,Lv2019} 
+to address the \emph{curse of dimensionality}. However, there is no analytical performance bound on the proposed approximation algorithms.
+
+In this chapter, we would like to shed some lights on the above issue by optimizing the job dispatching from multiple APs to multiple edge servers via a network with unpredictable uploading delay.
+Specifically, we consider the \emph{unrelated machines model} so that different edge servers may have different processing capability on each job type. 
+The job arrivals, job uploading delay from APs to edge servers and the job computation time at the edge servers are all modeled via random variables.
+Our contributions in this job dispatching scenario are summarized below.
+\begin{itemize}
+    \item We formulate the joint optimization of job dispatching in all the APs and time slots as an infinite-horizon MDP, where the minimization objective is a discounted measurement of job processing time, including the uploading delay, the waiting time and the computation time  at
+        edge servers. The issue of random uploading delay and computation time is addressed via the state transition distribution of MDP formulation.
+    \item Conventional MDP problems suffer from \emph{curse of dimensionality}.
+    In order to address this issue, a novel approach of value function approximation is proposed for the above infinite-horizon MDP with discounted cost, where the expressions of approximated value function is derived. Hence, the complicated value iteration is avoided. Moreover, with this new approach, the performance of the proposed dispatching algorithm can be analytically bounded. 
+\end{itemize}
+
+We use the following notations throughout this chapter:
+$\mathbb{G}(p)$ denotes the geometric distribution with parameter $p$;
+$\mathbb{B}(n,p)$ denotes binomial distribution with parameters $n$ and $p$;
+$\mathbb{R}^{M\times N}$ denotes spaces of $M\times N$ matrices with real entries.
+The remainder of this chapter is organized as follows.
+The system model is presented in Section \ref{sec:chapter3_prev-model}.
+Problem formulation and low-complexity scheduling are illustrated in Section \ref{sec:chapter3_prev-formulation} and Section \ref{sec:chapter3_prev-solution}, respectively.
+In Section \ref{sec:chapter3_prev-simulation}, numerical simulations are conducted.
+Finally, the conclusion is drawn in Section \ref{sec:chapter3_prev-conclusion}.
+
+%=================================================================================================%
+%=================================================================================================%
+
+\section{System Model}
+\label{sec:chapter3_prev-model}
+In this section, we introduce the model of the edge computing system considered, including the statistical models of job arrival, uploading and computation.
+
+\subsection{Network Model}
+We consider an edge computing system with $K$ access points (APs) and $M$ edge servers, which are connected in a network as illustrated in \figurename~\ref{fig:ch3_prev-system}. The sets of APs and edge servers are denoted as $\apSet \define \set{1, \dots, K}$ and
+$\esSet \define \set{1, \dots, M}$, respectively.
+Each AP collects the computation jobs from the mobile users within its service area, and uploads each job to one of the edge servers.
+Without loss of generality, it is assumed that there are $J$ types of computation jobs supported in this system, which are denoted via the set $\jSpace \define \set{1, \dots, J}$.
+The edge servers may have different processing capability on different job types. The APs and edge servers may be deployed in an open network (e.g., metropolitan area network) with other traffics (e.g., video streaming and file delivery).
+It is shown in a number of existing literature \cite{tan-online,liang2017} that the job uploading delay is not negligible compared with the computation time. Moreover, due to the randomness of network traffics, the job uploading delay is assumed to be random. We shall optimize the computation edge server for each job type at the APs, according to the distribution of job uploading delay, the queuing status and the job processing capability of edge servers. 
+
+The time axis is organized by time slots in order to facilitate the dispatcher design. The job arrival in each time slot is modelled via Bernoulli distribution. Specifically, the arrivals of the $j$-th job type at the $k$-th AP in different time slots are independent and identically distributed (i.i.d.) Bernoulli random variables, and the arrival probability is denoted as $\lambda_{k,j}$ ($\forall k\in\apSet, j\in\jSpace$). Let $A_{k,j}(t)\in\set{0,1}$ be the indicator of job arrival, where $A_{k,j}(t)=1$ means one job of the  $j$-th type arrives at the $k$-th AP in the $t$-th time slot, and $A_{k,j}(t)=0$ means otherwise. Hence,
+\begin{align}
+    \Pr\Paren{ A_{k,j}(t)=1 } = \lambda_{k,j}, \forall k,j,t.
+\end{align}
+
+At the beginning of each time slot, APs dispatch each type of jobs arrived in the previous time slot to one edge server. Thus, the APs make decisions on the mapping from job types to edge servers in each time slot. We shall refer to these decisions in each time slot as dispatching actions. Let $\omega_{k,j}(t)\in\esSet$ denotes the index of edge server, to which the $k$-th AP dispatches the job of the $j$-th type in the $t$-th time slot. The dispatching action of the system in the t-th time slot can be represented as
+\begin{align*}
+    \set{ \omega_{k,j}(t)|\forall k\in\apSet,\forall j\in\jSpace }.
+\end{align*}
+
+Different types of jobs may have different distributions on the input data size. Moreover, the network between APs and edge servers may be jammed by other traffics. The job uploading delay from one AP to one edge server cannot be predicted accurately by APs. Instead, it is assumed that the uploading delay follows independent geometric distribution. Denote the geometric delay distribution of the $j$-th job type from the $k$-th AP to the $m$-th edge server as $\mathbb G\left(1/\bar{U}_{k,j}^{m}\right)$, where $\bar{U}_{k,j}^{m}$ is the expectation of the distribution. 
+
+\begin{remark}[Memoryless Uploading Delay Distribution]
+    The  geometric distribution has the memoryless property. For example, let $U^m_{k,j}(t)$ be the uploading delay of the job of the $j$-th type which is dispatched from the $k$-th AP to the $m$-th edge sever in the $t$-th time slot. Then,
+    $\forall n>0, s>0, t, k\in\apSet,j\in\jSpace,m\in\esSet$, 
+    \begin{align*}
+        \Pr\Paren{
+            {U}_{k,j}^{m}(t)> n+s\big|{U}_{k,j}^{m}(t)>n
+        } = 
+        \Pr\Paren{{U}_{k,j}^{m}(t)>s}.
+    \end{align*}
+    As a result, the statistics of job arrivals at the edge servers depend only on the number of jobs which are being delivered from APs to edge servers. It is not necessary for the APs to record the number of time slots for which these jobs has been delivered from the AP.
+    However, our proposed algorithm is not limited to the geometric delay distribution. It can be easily extended to the scenarios that the job uploading delay follows other distributions. We use the geometric distribution as it can simplify the notation system.
+\end{remark}
+
+Let $N_{k,j}^m(t)$ be the number of the jobs of the $j$-th type, which is being uploaded from the $k$-th AP to the $m$-th edge server at the beginning of the $t$-th time slot, $D_{k,j}^m(t)\in\set{0,1,\dots,N_{k,j}^m(t)}$ be the number of the jobs of the $j$-th type which arrive at the $m$-th edge server from the $k$-th AP in the $t$-th time slot, respectively.
+As a remark notice that the data of the jobs in $N_{k,j}^m(t)$ have not arrived at the $m$-th edge server by the beginning of the $t$-th time slot. Due to the random uploading delay, some of these jobs may arrive during the $t$-th time slot, which are measured by $D_{k,j}^m(t)$. Hence, $D_{k,j}^m(t)$ follows binomial distribution with expectation $N_{k,j}^m(t)/\bar{U}_{k,j}^{m}$, i.e., $D_{k,j}^m(t)\sim \mathbb{B}(N_{k,j}^m(t),1/\bar{U}_{k,j}^{m})$,
+and the probability mass function (PMF) of $D_{k,j}^m(t)$ is given by
+\begin{align}
+\Pr\left(D_{k,j}^m(t)=n\right)&=\binom{N_{k,j}^m(t)}{n}\left(\frac{1}{\bar{U}_{k,j}^{m}}\right)^n\left(1-\frac{1}{\bar{U}_{k,j}^{m}}\right)^{N_{k,j}^m(t)-n}, \nonumber\\ 
+\forall n&=0,1,\dots,
+N_{k,j}^m(t).
+\end{align}
+Hence, given job arrival process $A_{k,j}(t)$ and job dispatching decision $\omega_{k,j}(t)$,  the dynamics of $N_{k,j}^m(t+1)$ ($\forall t, k\in \apSet, m\in \esSet, j \in \jSpace$)  can be expressed as
+\begin{align}
+N_{k,j}^m(t+1)=&N_{k,j}^m(t)+A_{k,j}(t)\indicator[\omega_{k,j}(t)=m]-D_{k,j}^m(t).
+\end{align}
+In the above equation, $\indicator[\mathcal{E}]$ is the indicator function, whose value is $1$ when the event $\mathcal{E}$ is true and $0$ otherwise.
+
+\subsection{Computation Model}
+There are $J$ virtual machines (VMs) on each edge server for the computation of $J$ job types, respectively. For each type, the uploaded jobs are computed in a first-come-first-serve (FCFS) manner.
+Hence, a processing queue with maximum $L_{\max}$ jobs is established for each VM, and the first job is computed. The arrival jobs will be discarded when the processing queue is full.
+Denote $L_{m,j}(t)\in\set{0,1,\dots,L_{{\max}}}$ as the number of the jobs of the $j$-th type at the $m$-th edge server at the beginning of the $t$-th time slot.
+
+We adopt the \emph{unrelated machines} assumption as in \cite{tan-online} for job computation on edge servers. Specifically, it is assumed that different types of jobs have different distributions of computation time at each edge server.
+We denote $f_{m,j}(x)$ as the PMF of computation time distribution of the j-th job type at the m-th edge server ($\forall m\in\esSet, j \in \jSpace$).
+Let $\eta_{m,j}(t)\in\{0,1,\dots,\eta_{{\max}}\}$ be the remaining computation time slots of the first job at the $j$-th VM at the beginning of the $t$-th time slot, where $\eta_{{\max}}$ denotes the maximum number of computation time slots for each job. Then dynamics of  $\set{\eta_{m,j}(t)|\forall t}$ are summarized below: 
+\begin{itemize}
+    \item When the $\eta_{m,j}(t)>1$,  $\eta_{m,j}(t+1)=\eta_{m,j}(t)-1$;
+    \item When the computation of the first job is finished in the $t$-th time slot ($ \eta_{m,j}(t)= \{0,1\} $) and there are no job in the processing queue ($ L_{m,j}(t)=0 $), ${\eta}_{m,j}(t+1)=0$;
+    \item When the computation of the current job is finished in or before the $t$-th time slot ($ \eta_{m,j}(t)= 1 $) and $ L_{m,j}(t)>0 $, the distribution of $\eta_{m,j}(t+1)$ is given by 
+    \begin{align}
+    \Pr\Paren{ \eta_{m,j}(t+1)=x } = f_{m,j}(x), \forall t, x\in \set{0,1,\dots,L_{{\max}}}.
+    \end{align}
+\end{itemize}
+Moreover, the dynamics of $L_{m,j}(t)$ can be expressed as
+\begin{align}
+    L_{m,j}(t+1) = \min\Paren{
+        L_{m,j}(t) - \indicator[\eta_{m,j}(t)=1] + \sum_{\forall k \in \apSet}D_{k,j}^m(t), L_{{\max}}
+    },
+    \nonumber\\ 
+    \forall t, m\in\esSet,j\in\jSpace.
+\end{align}
+ 
+In the remaining of this chapter, we shall refer to
+$
+Q_{m,j}(t) \define \Paren{ L_{m,j}(t), \eta_{m,j}(t) }
+$
+as the queuing state information (QSI) of the $j$-th type job at the $m$-th edge server at the beginning of the $t$-th time slot.
+
+%=================================================================================================%
+%=================================================================================================%
+
+\section{Infinite-Horizon MDP Formulation}
+\label{sec:chapter3_prev-formulation}
+Since the job dispatching in one time slot will affect the system status (e.g., QSI of the edge servers) of the following time slots.
+The joint optimization of job dispatching in all the time slots is necessary. In this section, we shall formulate such joint optimization as a MDP. 
+
+\subsection{System State and Scheduling Policy}
+We first define the system state $\Stat$ and scheduling policy $\Policy$ as follows. 
+\begin{definition}[System State] \em
+    At the beginning of the $t$-th time slot, the system state of the $j$-th job type is represented as $\Stat_j(t) \define (\mathbf{N}_j(t),\mathbf{Q}_j(t))$, which consists of
+    \begin{itemize}
+        \item The number of jobs being uploaded:
+        \begin{align}
+        \mathbf{N}_j(t) \define \{N_{k,j}^m(t)|\forall k \in \apSet, \forall m \in \esSet \};
+        \end{align}
+        \item Queuing state information (QSI) of the edge servers:
+        \begin{align}
+        \mathbf{Q}_j(t) \define \{Q_{m,j}(t)|\forall m \in \esSet\}.
+        \end{align}
+    \end{itemize}
+    Moreover, the aggregation of system state of all the type of jobs is referred to as the system state $\Stat(t)$, i.e., $\Stat(t) \define \{\Stat_j(t) | \forall j\in\jSpace \}$.
+\end{definition}
+
+It is assumed that all the APs and edge servers will broadcast their latest status at the end of every time slot, and the APs are able to collect the complete system state at the beginning of each time slot (i.e., $\Stat(t)$ at the beginning of the $t$-th time slot), so that the decision on job dispatching can be made accordingly. We ignore the delay of system state broadcasting, as the message size is small. Hence, the job dispatching policy is defined below.
+\begin{definition}[Job Dispatching Policy] \em
+     In the $t$-th time slot, the dispatching policy of the $j$-th job type, denoted as $\Policy_j$, is a mapping from system state $\Stat(t)$ to the job dispatching action  $\{ \omega_{k,j}(t)|\forall k\in\apSet \}$, i.e.,
+        \begin{align}
+        \Policy_{j}(\Stat(t)) \define \{\omega_{k,j}(t)|\forall k\in\apSet\}, \forall t.
+        \end{align}
+    Moreover, the aggregation of dispatching policies of all the job types is referred to as the system dispatching policy $\Policy$, i.e., $\Policy \define \{\Policy_j | \forall j\in\jSpace \}$.
+\end{definition}
+
+\subsection{Problem Formulation}
+According to the Little's law, the average processing time per job of the edge computing system, measuring the number of time slots from job arrival to the completeness of computation, is proportional to the average number of jobs in the system. We use the discounted summation of job numbers in all the time slots as the approximation of average processing time. Specifically, we first define the following weighted sum of the job number and job overflow penalty as the system cost at the $t$-th time slot.
+{\small
+\begin{align}
+    &g\Paren{ \Stat(t),\Policy(\Stat(t)) }
+        \define \sum_{j\in\jSpace} \Brace{
+            \underbrace{\sum_{k\in\apSet}\sum_{m\in\esSet}N_{k,j}^m(t) +\sum_{m\in\esSet}\Paren{
+                L_{m,j}(t) + \beta \indicator[L_{m,j}(t)=L_{{\max}}]
+            }}_{g_j\Paren{ \Stat_j(t),\Policy_j(\Stat_{j}(t)) }}
+        },
+\end{align}
+}
+where $\beta$ is a weight, and $g_j(\Stat_j(t),\Policy_j(\Stat_{j}(t)))$ denotes the system cost of $j$-th type in the $t$-th time slot. The overall system cost of all the time slots with the initial system state $\Stat$ is then given by
+\begin{align}
+    \bar{G}(\Policy, \Stat) \define
+    \lim\limits_{T\to\infty} \mathbb{E}_{\{\Stat(t)|\forall t\}}^{\Policy}
+    \Bracket{
+        \sum_{t=1}^{T} \gamma^{t-1}g\Paren{\Stat(t),\Policy(\Stat(t))} \big|
+        \Stat(1)=\Stat
+    },
+\end{align}
+where $\mathbb{E}_{\{\Stat(t)|\forall t\}}^{\Policy}[.]$ denotes the expectation with respect to all possible system states in the future given dispatching policy $\Policy$, and $\gamma$ is the discount factor. As a result, the cooperative job dispatching design can be formulated as the following infinite-horizon MDP.
+\begin{problem}[Cooperative Job Dispatching Problem]\label{Pro:main} \em
+    \begin{align}
+            \Policy^*&=\mathop{\arg\min}_{\Policy} \bar{G}(\Policy,\Stat) .
+    \end{align}
+\end{problem}
+The optimal policy of Problem \ref{Pro:main} can be obtained by solving the following Bellman's equations \cite{dp-control},
+\begin{align}
+    \label{eqn:bellman}
+    V(\Stat(t)) = \min_{\Policy(\Stat(t))} g\Paren{ \Stat(t),\Policy(\Stat(t)) }
+    +\gamma \sum_{\Stat(t+1)} &\Pr\Paren{ \Stat(t+1)\big|\Stat(t),\Policy(\Stat(t)) }
+    \nonumber\\
+    &\times V\Paren{ \Stat(t+1) },
+    \forall \Stat(t),
+\end{align}
+where $V(\cdot)$ denotes the value function of the optimal policy $\Policy^*$. It is proven in \cite{dp-control} that, $V(\Stat)$ represents the average system cost with initial system state $\Stat$ and optimal scheduling policy $\Policy^{*}$, i.e.,
+\begin{eqnarray*}
+    V(\Stat) = \lim\limits_{T\to\infty} \mathbb{E}_{\{\Stat(t)|\forall t\}}^{\Policy^{*}}
+    \Bracket{
+        \sum_{t=1}^{T} \gamma^{t-1}g\Paren{ \Stat(t),\Policy^{*}(\Stat(t)) }\big|\Stat(1)=\Stat
+    }.
+\end{eqnarray*}
+The system state transition probability can be written as
+\begin{align}\label{eqn:decouple}
+    &\Pr\Paren{ \Stat(t+1)\big|\Stat(t),\Policy(\Stat(t)) }
+    =\prod_{j\in\jSpace}\Pr\Paren{  \Stat_j(t+1)\big|\Stat_j(t),\Policy_j(\Stat_j(t))}
+    \nonumber\\
+    =&\prod_{j\in \jSpace,\forall k \in \apSet, \forall m \in \esSet}\Pr\Paren{ N_{k,j}^m(t+1)\big|\Stat_j(t),\Policy_j(\Stat_j(t)) }
+    \nonumber\\
+    &\times\prod_{j\in \jSpace,\forall m \in \esSet}\Pr\Paren{ Q_{m,j}(t+1)\big|\Stat_j(t),\Policy_j(\Stat_j(t)) }.
+\end{align}
+
+Generally speaking, the standard value iteration can be used to solve the value function $V(.)$ for all possible system states, and the optimal policy denoted as $\Policy^{*}$, can be derived by solving the minimization problem of the right-hand-side of the  Bellman's equations in Equation \eqref{eqn:bellman}. In our problem, however, the conventional value iteration is intractable due to the tremendous state space. For example, the number of system states grows exponentially with respect to the number of APs and edge servers. Hence, a novel low-complexity sub-optimal solution is proposed in the following section, whose performance can be bounded analytically. As a remark notice that it is difficult to obtain an analytical bound for the existing approximate MDP solution methods as in \cite{Ruiwang2011,Cui2012,Ruiwang2013}.
+
+%=================================================================================================%
+%=================================================================================================%
+
+\section{Low-Complexity Scheduling Policy}
+\label{sec:chapter3_prev-solution}
+In this section, we first introduce a heuristic scheduling policy as the baseline policy, whose value functions are derived analytically. Then, the proposed low-complexity sub-optimal policy can be obtained via the above value function and one-step policy iteration. The derived value function of the baseline policy becomes the cost upper bound of the proposed sub-optimal policy.
+
+\subsection{Baseline Scheduling Policy}
+The baseline scheduling policy with fixed dispatching action is elaborated below.
+\begin{policy}[Baseline Scheduling Policy $\Baseline$]
+    \label{Pol:baseline} \em
+    The following dispatching policy $\Baseline$ is adopted as the baseline policy.
+    \begin{align}
+    \Baseline \define \{\omega_{k,j}(t)=\omega_{k,j}^{\Baseline}|\forall t,k,j\},
+    \end{align}
+    where $\omega_{k,j}^{\Baseline}\in\esSet$ denotes the index of the fixed edge server for the processing of the $j$-th job type from the $k$-th AP.
+\end{policy}
+
+Given the system state $\Stat$ in the first time slot, the value function of policy $\Baseline$ is defined as
+\begin{align}
+    V_{\Baseline}(\Stat)\define \lim\limits_{T\to\infty} \mathbb{E}_{\{\Stat(t)|\forall t\}}^{\Baseline} \Bracket{
+        \sum_{t=1}^{T} \gamma^{t-1}g(\Stat(t),\Baseline)\big|\Stat(1)=\Stat
+    }.
+\end{align}
+In order to derive its analytical expression, we let 
+\begin{align}
+    {d}_{k,j,m}^{\text{AP}}(N_{k,j}^m) \define \lim\limits_{T\to\infty} \mathbb{E}^{\Baseline}_{\{N_{k,j}^{m}(t)|\forall t\}} \Bracket{
+        \sum_{t=1}^{T}\gamma^{t-1}N_{k,j}^{m}(t)\big|N_{k,j}^{m}(1)=N_{k,j}^{m}
+    }
+\end{align}
+be the average cost raised by the jobs of the $j$-th type which is being uploaded from $k$-th AP to $m$-th server, and 
+\begin{align}
+    {d}_{m,j}^{\text{ES}}(\Stat_j)\define &\lim\limits_{T\to\infty} \mathbb{E}^{\Baseline}_{\{N_{k,j}^{m}(t)|\forall t\}}\Bracket{
+        \sum_{t=1}^{T} \gamma^{t-1}L_{m,j}(t)
+        + \beta \indicator[L_{m,j}(t)=L_{\max}]\big|\Stat_j(1)=\Stat_j
+    }
+\end{align}
+be the average cost raised by jobs of the $j$-th type at the $m$-th edge server. $V_{\Baseline}(\Stat)$ can be written as 
+\begin{align}\label{eqn:V_baseline}
+    V_{\Baseline}(\Stat) = \sum_{j\in\jSpace}\Paren{
+        \underbrace{\sum_{k\in\apSet}\sum_{m\in\esSet}{d}_{k,j,m}^{\text{AP}}(N_{k,j}^{m})
+        +\sum_{m\in\esSet}{d}_{m,j}^{\text{ES}}(\Stat_j)}_{W_{j}(\Stat_j)}
+    },
+\end{align}
+where the expressions of ${d}_{k,j,m}^{\text{AP}}(.)$ and ${d}_{m,j}^{\text{ES}}(.)$ are given by following two lemmas respectively.
+
+\begin{table*}
+    \centering
+    \caption{Entries of matrix $\mathbf{M}_{k,j,m}$}
+    \label{table:M_{k,j,m}}
+    \begin{tabular}{ |p{0.27\linewidth}|p{0.27\linewidth}|p{0.46\linewidth}| }  
+        \hline
+        & & \\[-6pt]
+        $q$&$p$&$[\mathbf{M}_{k,j,m}]_{q,p}$ \\
+        \hline
+        & &  \\[-6pt]
+        $0$&$0$&$1-\lambda_{k,j}$ \\
+        \hline
+        & &  \\[-6pt]
+        $0$&$1$&$\lambda_{k,j}$ \\
+        \hline
+        & &  \\[-6pt] 
+        $0$&$2,\dots,N_{\max}$&$0$ \\
+        \hline
+        & &  \\[-6pt] 
+        $a\in\{1,\dots,N_{\max}-1\}$ & $b\in\{0,\dots,a\}$ & $(1-\lambda_{k,j})\binom{a}{a-b}(\frac{1}{\bar{U}_{k,j}^{m}})^{a-b}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b}+\lambda_{k,j}\binom{a}{a-b+1}(\frac{1}{\bar{U}_{k,j}^{m}})^{a-b+1}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b-1}$ \\
+        \hline
+        & &  \\[-6pt] 
+        $a\in\{1,\dots,N_{\max}-1\}$&$a+1$&$\lambda_{k,j}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{a}$ \\
+        \hline
+        & &  \\[-6pt] 
+        $a\in\{1,\dots,N_{\max}-1\}$&$b\in\{a+2,\dots,N_{\max}\}$&$0$ \\
+        \hline
+        & &  \\[-6pt] 
+        $N_{\max}$&$b\in\{0,\dots,N_{\max}-1\}$&${(1-\lambda_{k,j})\binom{N_{\max}}{N_{\max}-b}(\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-b}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b}\atop+\lambda_{k,j}\binom{N_{\max}}{N_{\max}-b+1}(\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-b+1}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b-1}}$ \\
+        \hline
+        & &  \\[-6pt] 
+        $N_{\max}$ & $N_{\max}$ & $(1-\lambda_{k,j})(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}}+\lambda_{k,j}{N_{\max}}(\frac{1}{\bar{U}_{k,j}^{m}})(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-1}+\lambda_{k,j}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}}$ \\
+        \hline
+    \end{tabular}
+\end{table*}
+
+\begin{lemma}[Analytical Expression of ${d}_{k,j,m}^{\text{AP}}$]
+    \label{lemma:AP}\em
+    ${d}_{k,j}^{\text{AP}}(N_{k,j}^m)$ can be expressed as
+    \begin{align}\label{eqn:AP}
+    {d}_{k,j,m}^{\text{AP}}(N_{k,j}^m)&=	\sum_{t=1}^{+\infty}[\mathbf{u}_{k,j,m}(N_{k,j}^m)]^{\mathsf{T}}(\gamma\mathbf{M}_{k,j,m})^{t-1}\mathbf{g}\nonumber\\
+    &=[\mathbf{u}_{k,j,m}(N_{k,j}^m)]^{\mathsf{T}}(\mathbf{I}-\gamma\mathbf{M}_{k,j,m})^{-1}\mathbf{g},
+    \end{align}
+    where the notations of $\mathbf{u}_{k,j,m}(N_{k,j}^m)$, $\mathbf{g}$ and $\mathbf{M}_{k,j,m}$ are defined below.
+    \begin{itemize}
+        \item $\mathbf{u}_{k,j,m}(N_{k,j}^m)\in \mathbb{R}^{(N_{\max}+1)\times1}$, whose $N_{k,j}^m$-th entry is $1$ and other entries are all $0$.
+        \item $\mathbf{g}\in \mathbb{R}^{(N_{\max}+1)\times1}$, whose $i$-th entry is $i$, $i=0,1,\dots,N_{\max}$.
+        \item $\mathbf{M}_{k,j,m}\in \mathbb{R}^{(N_{\max}+1)\times(N_{{\max}}+1)}$ denotes the transition matrix of the $\{N_{k,j}^m(t)|\forall t\}$, whose entries are given in Table \ref{table:M_{k,j,m}}.
+    \end{itemize}
+\end{lemma}
+\begin{proof}
+    The entries of matrix $\mathbf{M}_{k,j,m}$ is
+    \begin{align*}
+        [\mathbf{M}_{k,j,m}]_{q,p}\define\Pr\Paren{ N_{k,j}^m(t+1)=p\big|N_{k,j}^m(t)=q,\Baseline }.
+    \end{align*}
+    Then, we have following discussion on $[\mathbf{M}_{k,j,m}]$.
+    \begin{itemize}
+        \item $q=0$, $p=0$: There are no $j$-th type job arriving at the $k$-th AP. Hence $[\mathbf{M}_{k,j,m}]_{0,0}=1-\lambda_{k,j}$.
+        \item $q=0$, $p=1$: There is one $j$-th type job arriving at the $k$-th AP. Hence $[\mathbf{M}_{k,j,m}]_{0,1}=\lambda_{k,j}$.
+        \item $q=a\in\{1,\dots,N_{{\max}}-1\}$, $p=b\in\{0,\dots,a\}$: (i)
+        There are no $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=(a-b)$; (ii) There is one $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=(a-b)-1$.
+        Hence,  $[\mathbf{M}_{k,j,m}]_{a,b}=(1-\lambda_{k,j})\binom{a}{a-b}(\frac{1}{\bar{U}_{k,j}^{m}})^{a-b}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b}+\lambda_{k,j}\binom{a}{a-b+1}(\frac{1}{\bar{U}_{k,j}^{m}})^{a-b+1}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b-1}$.
+        \item $ q=a\in\{1,\dots,N_{{\max}}-1\}$, $p=a+1$: There is one $j$-th type job arriving at the $k$-th AP and  $D_{k,j}^{m}(t)=0$. Hence, $[\mathbf{M}_{k,j,m}]_{a,a+1}=\lambda_{k,j}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{a}$.
+        \item  $q=N_{\max}$, $p=b\in\{0,\dots,N_{\max}-1\}$: (i)
+        There are no $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=(N_{{\max}}-b)$; (ii) There is one $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=(N_{{\max}}-b)-1$. Hence, $[\mathbf{M}_{k,j,m}]_{N_{{\max}},b}=(1-\lambda_{k,j})\binom{N_{\max}}{N_{\max}-b}(\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-b}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b}+\lambda_{k,j}\binom{N_{\max}}{N_{\max}-b+1}(\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-b+1}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{b-1}$.
+        \item  $q=N_{\max}$, $p=N_{\max}$: (i)There are no $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=0$; (ii) There is one $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=1$; There is one $j$-th type job arriving at the $k$-th AP and $D_{k,j}^{m}(t)=0$. Hence, $[\mathbf{M}_{k,j,m}]_{N_{{\max}},N_{{\max}}}=(1-\lambda_{k,j})(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}}+\lambda_{k,j}{N_{\max}}(\frac{1}{\bar{U}_{k,j}^{m}})(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}-1}+\lambda_{k,j}(1-\frac{1}{\bar{U}_{k,j}^{m}})^{N_{\max}}$.
+        \item Otherwise, $[\mathbf{M}_{k,j,m}]_{q,p}=0$.
+    \end{itemize}
+
+    To prove the second equity of Equation \eqref{eqn:AP}, we first show $||\gamma\mathbf{M}_{k,j,m}||<1$, where $||.||$ is the matrix norm. It clear that $||\gamma\mathbf{M}_{k,j,m}||=\gamma\rho(\mathbf{M}_{k,j,m})$, where $\rho(\mathbf{M}_{k,j,m})$ is the spectrum radius of  $\mathbf{M}_{k,j,m}$. According to Perron-Frobenius Theorem \cite{meyer2000matrix}, the spectrum radius of transition probability matrix is $1$. Since $\mathbf{M}_{k,j,m}$ is transition probability matrix, we have $||\gamma\mathbf{M}_{k,j,m}||=\gamma<1$. Let $\mathbf{X}_n=\sum_{t=1}^{n}(\gamma\mathbf{M}_{k,j,m})^{t-1}$, we have
+    \begin{align*}
+        \mathbf{X}_n=(\mathbf{I}-\gamma\mathbf{M}_{k,j,m})^{-1}-(\gamma\mathbf{M}_{k,j,m})^{n+1}(\mathbf{I}-\gamma\mathbf{M}_{k,j,m})^{-1}.
+    \end{align*}
+    Then
+    \begin{align*}
+        \lim\limits_{n\to+\infty} \mathbf{X}_n=(\mathbf{I}-\gamma\mathbf{M}_{k,j,m})^{-1}.
+    \end{align*}
+    Hence, the Equation \eqref{eqn:AP} is straightforward.
+\end{proof}
+
+
+\begin{lemma}[Analytical Expression of ${d}_{m,j}^{\text{ES}}$]
+    \label{lemma:ES}
+    ${d}_{m,j}^{\text{ES}}(\Stat_j)$ is given by
+    \begin{align}
+    {d}_{m,j}^{\text{ES}}(\Stat_j)=&[\mathbf{q}_{m,j}(Q_{m,j})]^{\mathsf{T}}\mathbf{c}\nonumber\\
+    &+\sum_{t=2}^{+\infty}[\mathbf{q}_{m,j}(Q_{m,j})]^{\mathsf{T}}\Big[\gamma\mathbf{P}_{m,j}\Big(\alpha_{m,j}(t-1)\Big)\Big]^{t-1}\mathbf{c},
+    \end{align}
+    where the notations of $\mathbf{q}_{m,j}({Q}_{m,j})$,  $\mathbf{c}$, $\mathbf{P}_{m,j}\Big(\alpha_{m,j}(t-1)\Big)$ and $\alpha_{m,j}(t-1)$ are defined below.
+    \begin{itemize}
+        \item $\mathbf{q}_{m,j}({Q}_{m,j})\in \mathbb{R}^{(L_{{\max}}\eta_{{\max}}+1)\times1}$, whose $i$-th entry is 
+            \begin{align}
+        [\mathbf{q}_{m,j}({Q}_{m,j})]_{i}=\begin{cases}
+        1, & i=\eta_{m,j}+(L_{m,j}-1)*\eta_{{\max}}
+        \cr
+    0, & 
+            i=0,\dots,\eta_{m,j}+(L_{m,j}-1)*\eta_{{\max}}-1,\atop\eta_{m,j}+(L_{m,j}-1)*\eta_{{\max}}+1,\dots,\eta_{{\max}}L_{{\max}}
+        \end{cases}
+        \end{align}
+        \item $\mathbf{c}\in \mathbb{R}^{(L_{{\max}}\eta_{{\max}}+1)\times1}$,  whose $i$-th entry is 
+        \begin{align}
+        c_{i}=\begin{cases}
+        \lceil i/\eta_{{\max}}\rceil, & i=0,1,\dots,(L_{{\max}}-1)\eta_{{\max}}
+        \cr
+        L_{{\max}}+\beta, & \text{ otherwise}
+        \end{cases}
+        \end{align}
+        \item $\mathbf{P}_{m,j}\Big(\alpha_{m,j}(t-1)\Big)\in\mathbb{R}^{(L_{{\max}}\eta_{{\max}}+1)\times(L_{{\max}}\eta_{{\max}}+1)}$ denotes the transition matrix of the $\{Q_{m,j}(t)|\forall t\}$ given the average number of job arrival $\alpha_{m,j,t-1}$, where
+        \begin{align}
+        \alpha_{m,j}(t)\triangleq\sum_{k\in\apSet} \indicator(\omega_{k,j}^{\Baseline}=m)\frac{[\mathbf{u}_{k,j,m}(N_{k,j}^m)]^{\mathsf{T}}(\mathbf{M}_{k,j,m})^{t-1}\mathbf{g}}{\bar{U}_{k,j}^m}.
+        \end{align}
+        The entries of the transition probability matrix $\mathbf{P}_{m,j}(.)$ are provided by table \ref{table:P}.
+    \end{itemize}
+\end{lemma}
+\begin{proof}
+    The proof is similar to the proof of Lemma \ref{lemma:AP}.
+\end{proof}
+
+\begin{table*}
+    \centering
+    \caption{Entries of matrix $[\mathbf{P}_{m,j}(\alpha_{m,j}(t-1))]$}
+    \label{table:P}
+    \begin{tabular}{ |p{0.40\linewidth}|p{0.33\linewidth}|p{0.27\linewidth}| }
+        \hline
+        & & \\[-6pt]
+        $q$ & $p$ & $[\mathbf{P}_{m,j}(\alpha_{m,j}(t-1))]_{q,p}$\\
+        \hline
+        & & \\[-6pt]
+        $0$&$0$&$1-\alpha_{m,j}(t-1)$\\  %
+        \hline
+        & & \\[-6pt]
+        $0$ & $b\in\{1,\dots,N_{{\max}}\}$ & $(1-\alpha_{m,j}(t-1))f_{m,j}(b)$\\  %
+        \hline
+            & & \\[-6pt]
+        $0$&$\{N_{{\max}}+1,\dots,Q_{{\max}}N_{{\max}}\}$&$0$\\  %
+        \hline
+            & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+2,\dots,N\times N_{{\max}}+N_{{\max}}|N=0,1,\dots,Q_{{\max}}-1\}$&$a-1$&$1-\alpha_{m,j}(t-1)$\\  %
+        \hline
+        & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+2,\dots,N\times N_{{\max}}+N_{{\max}}|N=0,1,\dots,Q_{{\max}}-1\}$&$a+N_{{\max}}-1$&$\alpha_{m,j}(t-1)$\\  %
+        \hline
+        & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+2,\dots,N\times N_{{\max}}+N_{{\max}}|N=0,1,\dots,Q_{{\max}}-1\}$&${\{1,\dots,N_{{\max}}Q_{{\max}}\}\atop\setminus\{a-1,a+N_{{\max}}-1\}}$&$0$\\  %
+        \hline
+            & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+1|N=0,1,\dots,Q_{{\max}}-1\}$&$b\in\{a-N_{{\max}},\dots,a-1\}$&${(1-\alpha_{m,j}(t-1))\atop\times f_{m,j}(b-a+1+N_{{\max}})}$\\  %
+        \hline
+            & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+1|N=0,1,\dots,Q_{{\max}}-1\}$&$b\in\{a,\dots,a-1+N_{{\max}}\}$&${(1-\alpha_{m,j}(t-1))\atop\times f_{m,j}(b-a+1)}$\\  %
+        \hline
+            & & \\[-6pt]
+        $a\in\{N\times N_{{\max}}+1|N=0,1,\dots,Q_{{\max}}-1\}$&${\{1,\dots,N_{{\max}}Q_{{\max}}\}\setminus\atop\{\{a-N_{{\max}},\dots,a-1\}\cup \{a,\dots,a-1+N_{{\max}}\}\}}$&$0$\\  %
+        \hline
+    \end{tabular}
+\end{table*}
+
+\subsection{Scheduling Policy with One-Step Policy Iteration}
+In this section, we use the value function of the baseline policy $\{V_{\Baseline}(\Stat)|\forall \Stat\}$ derived in the previous section to approximate the value function of the optimal policy $\{{V}(\Stat)|\forall \Stat\}$ in Equation \eqref{eqn:bellman}, and derive the proposed scheduling policy. Because the expression of value function $\{V_{\Baseline}(\Stat)|\forall \Stat\}$ is provided, the value iteration can be avoid, which significantly reduces the computation complexity. 
+Note that $V_{\Baseline}(\Stat)$, $g(\Stat(t),\Policy(\Stat(t)))$ and $\Pr\Big(\Stat(t+1)\Big|\Stat(t),\Policy(\Stat(t))\Big) $ in Equation \eqref{eqn:decouple} can be decoupled for each type of job, Problem \ref{Pro:main} with the value function approximation can be decoupled into the following per-type optimization.
+
+\begin{problem}[Sub-Optimal Scheduling Problem of $j$-th Type]\label{Pro:sub-opt} \em
+    \begin{align}
+    \min_{\Policy_j(t)}&g_j\Paren{ \Stat_j(t),\Policy_j(\Stat_j(t)) }
+    \nonumber\\
+    &+\gamma \sum_{\Stat_j(t+1)}\Pr\Paren{ \Stat_j(t+1)\big|\Stat_j(t),\Policy_j(\Stat_j(t)) } W_{j}(\Stat_j(t+1)),
+    \end{align}
+where $W_{j}(.)$ is defined in Equation \eqref{eqn:V_baseline}.
+\end{problem}
+
+Problem \ref{Pro:sub-opt} is NP-hard due to the combinatorial search of the computation edge servers \cite{dp-control}, and it is difficult to find the optimal solution. Hence, instead of the intractable optimal solution, we propose a sub-optimal low-complexity solution as follows.
+\begin{Algorithm}[Proposed Scheduling Policy]
+    \label{alg:proposed}
+    With the system state of $j$-th type jobs $\Stat_{j}$, the proposed scheduling policy $\Baseline_j^{\dagger}(\Stat_{j})$ is given below.\em
+    \begin{itemize}
+        \item  {\bf Step 1: }Let $\ell=0$. Initialize dispatching action with the $\Baseline_j^{\ell}= \{\omega_{k,j}^{\ell}=\omega_{k,j}^{\Baseline}|\forall k\}$ and let $X=W_j(\Stat_j(t))$.
+        \item {\bf Step 2: }Let $\ell=\ell+1$ and update the set of dispatching action from $\Baseline_{j}^{l-1}$ to $\Baseline_{j}^l$ as 
+        $\omega_{k,j}^{\ell} = \omega_{k,j}^{\ell-1}, \forall \ell \neq l$, and $\omega_{\ell,j}^{\ell}$ is the solution of the following optimization problem. 
+        \begin{align}	
+        Y_{\ell} = &\min_{\omega_{\ell,j}\in\esSet}g_j\Paren{
+            \Stat_j(t),\{\omega_{k,j}^{\ell}|\forall k\neq \ell\}\cup\{\omega_{\ell,j}\}
+        }
+        \nonumber\\
+        &+\gamma \sum_{\Stat_j(t+1)} \Pr\Paren{
+            \Stat_j(t+1)\big|\Stat_j(t),\{\omega_{k,j}^{\ell}|\forall k\neq \ell\}\cup\{\omega_{\ell,j}\}
+        }\nonumber\\
+        &\quad\quad\quad\quad\quad\times W_{j}(\Stat_j(t+1)).
+        \end{align}
+        If $Y_{\ell}<X$, let $X=Y_{\ell}$. 
+        \item {\bf Step 3:} If $\ell=K$, algorithm terminates. The proposed scheduling policy is $\Baseline_{j}^{\dagger}(\Stat_j(t))=\Baseline_{j}^{K}(\Stat_j(t))$. Otherwise, go to Step 2.
+    \end{itemize}
+\end{Algorithm}
+
+The complexity of Algorithm \ref{alg:proposed} is $O(KM)$.
+Although it is sub-optimal solution of Problem \ref{Pro:sub-opt}, its performance is superior to the baseline policy, which is summarized in the following lemma.
+\begin{lemma}[Performance Bound] \em
+    Let $V_{{\Baseline}^{\dagger}}(.)$ be the value function of the policy ${\Baseline}^{\dagger}\define\{\Baseline_{j}^{\dagger}|\forall j\in \jSpace\}$, i.e.,
+    \begin{align}
+        &V_{{\Baseline}^{\dagger}}(\Stat) \define \lim\limits_{T\to\infty}\mathbb{E}_{\{\Stat(t)|\forall t\}}^{{\Baseline}^{\dagger}}\Bracket{
+            \sum_{t=1}^{T} \gamma^{t-1}g\Paren{\Stat(t),{\Baseline}^{\dagger}(\Stat(t))}\big|\Stat(1)=\Stat
+        },
+    \end{align}
+    we have
+    \begin{align}
+        V(\Stat)\leq V_{{\Baseline}^{\dagger}}(\Stat)\leq V_{{\Baseline}}(\Stat), \forall \Stat.
+    \end{align}
+\end{lemma}
+\begin{proof}
+    Since policy $\Baseline^{\dagger}$ is not optimal policy, $V(\Stat)\leq V_{{\Baseline}^{\dagger}}(\Stat)$ is straightforward.
+    Due to the \emph{Policy Improvement Property} in \cite{dp-control}, we have $V_{{\Baseline}^{\dagger}}(\Stat)\leq	V_{{\Baseline}}(\Stat)$.
+\end{proof}
+
+To the best of our knowledge, the performance can hardly be bounded in the existing approximate MDP methods.
+We show a low complexity approximate MDP method whose performance can be bounded analytically.
+\begin{remark}[Complexity Analysis] \em
+ In the above approximation approach, the computation complexity of
+    value function calculation is $O(J(KM+M))$. 
+    On the other hand, the optimal solution of MDP suffers from the curse of dimensionality. Specifically, the computation complexity of the conventional value
+    iteration algorithm is $O\Big((N_{{\max}})^{2KJM}(L_{{\max}}\eta_{{\max}})^{2MJ}M^{KJ}\Big)$ and the memory requirement is $O\Big((N_{{\max}})^{KJM}(L_{{\max}}\eta_{{\max}})^{MJ}\Big).$
+\end{remark}
+
+%=================================================================================================%
+%=================================================================================================%
+
+\section{Numerical Simulations}
+\label{sec:chapter3_prev-simulation}
+In this section, we evaluate the performance of the proposed low-complexity sub-optimal scheduling policy (Algorithm \ref{alg:proposed}) by numerical simulations. In the simulation, there are $5$ APs, $3$ edge servers and $10$ types of jobs in the network. The computation time of each job type at each edge server follows the uniform distribution. The following four benchmark schemes are compared with the proposed scheduling scheme.
+\begin{itemize}
+    \item SQF (shortest queue first) algorithm: APs dispatch the jobs to the edge server with the shortest queue length of the same type;
+    \item SUF (shortest uploading time first) algorithm: APs dispatch the jobs to the edge server with shortest \emph{expected uploading time};
+    \item SCF (shortest computation time first) algorithm: APs dispatch the jobs to the edge server with shortest \emph{expected computation time} for that job type;
+    \item Random algorithm: APs randomly dispatch the jobs to the edge server at each time slot.
+\end{itemize}
+Moreover, in the proposed scheme, we use the SCF algorithm as the baseline policy \ref{Pol:baseline}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{chapter3_prev/timeline.pdf}
+    \caption{The cost versus time slots when the average uploading delays and the job computation times are comparable. For example, the average uploading delay of the first job type from $1$-st AP to $1$-st edge server is $10$ time slots, and the job computation time of the first job type at the $1$-st edge server ranges from $10$ to $15$ time slots.}
+    \label{fig:timeline}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{chapter3_prev/general-setting.pdf}
+    \caption{Cumulative distribution function(CDF) of the cost per time slot when average uploading delays and job computation times are comparable. For example, the average uploading delay of the first job type from first AP to first edge server is $10$ time slots, and the job computation time of the first job type at the first edge server ranges from $10$ to $15$ time slots.}
+    \label{fig:cdf1}
+\end{figure*}
+
+In \figurename~\ref{fig:timeline} and \figurename~\ref{fig:cdf1}, the performance of the five schemes are compared when average uploading delays and job computation times are comparable. It can be observed that the proposed algorithm has significantly less cost per time slot than all the benchmarks. Note that in SQF algorithm, the job dispatching can be adjusted according to system state; whereas, the SUF and SCF algorithms have fixed job dispatching action in all the time slots. SQF algorithm has better performance than SUF and SCF algorithms.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{chapter3_prev/only-ul.pdf}
+    \caption{Cumulative distribution function (CDF) of the cost per time slot when average uploading delays are dominant. For example, the average uploading delay of the first job type from first AP to first edge server is $10$ time slots, and the average job computation time of the first job type at the first edge server is $1$ time slot.}
+    \label{fig:cdf2}
+\end{figure*}
+
+In \figurename~\ref{fig:cdf2}, the average uploading delays are dominant, compared with the average job computation times. The performance of proposed algorithm is almost the same as the performance of SUF algorithm. Hence, in the edge computing network with dominant uploading delays, APs tend to dispatch the jobs to the edge server with shortest \emph{expected uploading time}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\textwidth]{chapter3_prev/only-computation-heavy.pdf}
+    \caption{Cumulative distribution function (CDF) of the cost per time slot when average job computation times are dominant. For example, the average uploading delay of the first job type from first AP to first edge server is $1$ time slots, and the average job computation time of the first job type at the first edge server ranges from $10$ to $15$ time slots.}
+    \label{fig:cdf3}
+\end{figure*}
+
+In \figurename~\ref{fig:cdf3}, the average job computation times are dominant, compared with the average uploading delays. It can be observed that the proposed algorithm has less cost per time slot than all the benchmarks. Note that SCF algorithm has better performance than other benchmarks, the APs tend to dispatch the jobs to the edge server with shortest \emph{expected computation time} in this situation.
+
+\section{Summary}
+\label{sec:chapter3_prev-conclusion}
+In this chapter, we consider the cooperative job dispatching in an edge computing network with multiple APs and edge servers. The job uploading delay and computation time are both random and unpredictable. We formulate the joint optimization of job dispatching at all the APs and all the time slots as an infinite-horizon MDP with discounted cost. In order to avoid the curse of dimensionality, we also introduce a low-complexity sub-optimal solution based on one-step policy iteration from a baseline policy. The analytical performance bound is derived. Finally, it is shown by simulations that our proposed scheme has better performance than various benchmarks.
+In Chapter 3, we shall extend the proposed algorithm to one new scenario where the delay of collecting complete system state information at each AP is not negligible.
+Moreover, the memoryless distribution of uploading delay can also be generalized to arbitrary distribution.

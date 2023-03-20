@@ -1,0 +1,110 @@
+% !TeX root = ../../main.tex
+
+\chapter{Conclusions and Future Work}
+\label{ch4}
+
+In this thesis, we investigate the Approximate Markov Decision Process (AMDP) algorithm design for multi-agent edge computing and edge learning systems.
+% The thesis is organized into two parts, where the theorems of the approximation solution frameworks are explored for infinite-horizon MDP problems in Part I and for finite-horizon MDP problems in Part II.
+The proposed solution framework well addresses the challenges of the edge computing or edge learning applications appeared in each part.
+The corresponding simulation results also verify the effectiveness of the proposed algorithms.
+In this chapter, we firstly summarize the main contributions of this thesis and then discuss some potential research directions for future study.
+
+\section{Conclusions}
+
+\subsection{Low-complexity AMDP Algorithm Design in Edge Computing Systems}
+In Part I, we consider the multi-agent job dispatching problem in an edge computing network with multiple APs and edge servers.
+First of all, a centralized cooperative jobs dispatching problem with multiple access points (APs) and edge servers is considered in Chapter 2.
+Due to the uncertain traffic in the network between APs and edge servers, the job uploading delay can not be predicted accurately.
+We formulate the joint optimization of jobs dispatching at all the APs and all the time slots as an infinite-horizon MDP with discounted cost.
+In order to avoid the curse of dimensionality, we introduce a low-complexity sub-optimal solution based on one-step policy iteration from a baseline policy.
+In this chapter, a novel approximate MDP (AMDP) solution framework is proposed via one-step policy iteration over a baseline policy, where the analytical performance bound can be obtained.
+Moreover, since the expression of the approximate value function is derived, the value iteration in conventional methods can be eliminated, which can essentially reduce the computation complexity.
+Finally, it is shown by simulations that our proposed scheme has better performance than various benchmarks.
+
+Furthermore, in Chapter 3, we extend the centralized scheduling problem to a decentralized scenario where the jobs dispatching is implemented in a distributed manner on multiple APs.
+A broadcast-based signaling mechanism is introduced to facilitate the cooperation among distributed job dispatchers.
+As the reception of updated and fully-observed global system state is discouraged due to the random transmission latency, the decentralized scheduling problem is formulated as a partially-observable MDP (POMDP) problem.
+Hence, we propose a novel low-complexity solution framework for distributed job dispatching, based on which the optimization of job dispatching policy can be decoupled via an alternative policy iteration algorithm and a theoretical performance lower bound is obtained.
+As for future work, we shall extend the proposed algorithm to one new scenario where the delay of collecting complete system state information at each AP is not negligible. Moreover, the memoryless distribution of uploading delay can also be generalized to arbitrary distribution.
+
+
+\subsection{Low-complexity AMDP Algorithm Design in Edge Learning Systems}
+In Part II, we extend the principle of the online algorithm design to the AMDP problems in edge learning systems.
+\revise{
+    Specifically, we consider both ``network-for-learning'' and ``learning-for-network'' scenarios in Chapter 4 and Chapter 5, respectively.
+}%
+
+In Chapter 4, we consider the edge federated learning system, where the {\IAVFullnames} ({\IAVs}) collect data from the environment and then upload the local training model to the edge server for aggregation.
+Considering the limited communication resource and the randomness of vehicular mobility, the communication scheduling problem is proposed to achieve the trade-off between the training time and energy consumption.
+We firstly develop a data-driven framework called {\fwName} to analyze the Markovian property of the vehicular mobility.
+Then, we formulate the communication scheduling problem as a finite-horizon MDP problem.
+To address the curse of dimensionality, we propose a novel two-time-scale approximate solution framework, where a centralized optimization of the transmission time and power is carried out at super-slot scale, while a decentralized fine-tuning of the transmission time is carried out at slot scale aware of the fast-change vehicular mobility.
+A non-trivial performance lower bound is obtained with the proposed iterative policy update algorithm
+The simulation results show that the proposed algorithm can achieve near-optimal performance with low complexity, and flexible trade-off between the performance and the computational complexity.
+Furthermore, the hand-over among multiple base stations and the scheduling of multiple training epochs are not taken into consideration.
+
+\revise{
+In Chapter 5, we consider the ``learning-for-network'' scenario, where a learning-based scheduling framework is proposed and implemented to optimize the application-layer quality-of-service (QoS) of complex network traffics in a IEEE 802.11 WLAN system with unknown interference.
+We jointly schedule the thoughput-hungry tasks of file delivery and delay-sensitive communication tasks, e.g., screen projection, by adjusting the contention window sizes and application-layer throughput throttling.
+Due to the unknown interference and vendor-specific implementation of wireless NIC, a reinforcement learning method is proposed to learn the mapping from the historical scheduling parameters and QoS observations to the current scheduling action.
+The experiment results on the commercial-off-the-shelf testbed show that the proposed framework can achieve a significantly better QoS than the conventional EDCA mechanism, and other heuristic algorithms.
+}%
+
+%=================================================================================================%
+%=================================================================================================%
+\section{Future Work}
+In this section, we discuss some potential research directions for future study.
+The focuses are put on two major aspects for theorems and applications, respectively, of the edge computing systems.
+As for the applications, we focus on the emerging and potential problems for edge computing in sight of the state synchronization and multiple time-scale problems.
+As for the theorems, we focus on the novel approximate online solution to large-scale multi-agent MDP.
+
+\subsection{Emerging and Potential Problems for Edge Computing}
+In the past few years, the resource allocation and task scheduling problems in edge computing have been widely studied in the literature.
+With the prosperity of the 5G and the advance of Wi-Fi communication technology, the edge intelligent devices have also led to manifold applications aroused in the edge computing systems, such as edge caching, edge federated learning and etc.
+However, the existing researches have little discussion on the general solution to the fundamental problem raised in such system: how to efficiently make and apply scheduling decisions in the large-scale multi-agent, especially in a decentralized manner?
+In this section, we shed some light on the potential research directions for the edge computing systems.
+
+\noindent\textbf{State Synchronization in Large-scale Network}
+In Chapter 3, we consider the decentralized job dispatching problem in an edge computing network with multiple APs and edge servers.
+A simple broadcast mechanism is introduced as the information sharing mechanism to facilitate the cooperation among distributed job dispatchers.
+It is obvious that even with the extra information sharing, the reception of updated and fully-observed global system state is still unavoidable due to the transmission latency, and lower down the performance of the system.
+The state synchronization among distributed agents is an inevitable problem in large-scale multi-agent systems.
+In the literature, there have been some researches:
+some works merely consider the evil effect of the outdated information and try to minimize the so-called information freshness in the system;
+some works assume the agents compete with each other and argue that the equilibrium of the game could be achieved under certain strategy design;
+some works assume the agents though cooperate in presence of partially observable information but the convergence could be guaranteed via online learning.
+However, the disturbance of environmental dynamics and the heterogeneity of agents' behaviors (e.g., malicious attack) could lead to the failure of the above methods.
+Hence, the state synchronization in large-scale multi-agent system is still an open problem and current engineering solutions are still based on the centralized control.
+
+\noindent\textbf{Multi-level or Multiple Time-scale Problem}
+In Chapter 4, we consider an edge federated learning system where the mobile vehicles collect data from the environment and then upload the local training model to the edge server for aggregation.
+The edge server is responsible for the aggregation of the local training models and then broadcasts the global training model to all the participated mobile vehicles.
+The communication scheduling problem is tackled in a multiple time-scale manner to address the fast-change of vehicular mobility.
+This kind of multiple time-scale problem formulation or solution framework is seeking for more applications in the edge computing systems.
+For example, in an edge caching system, the edge server may be responsible for minimizing the cache miss ratio in the long term, while fetching the popular contents in case of minimal energy consumption.
+The joint optimization of the above two objectives could not be trivially decoupled and hence formulates a multi-level problem, where one algorithm is deployed at low-level for energy-efficient caching (short-term objective), while another algorithm at high-level, leverage its solution to achieve a minimum cache miss ratio (the long-term objective).
+There are more potential applications of the multi-level or multiple time-scale problems when considering the computational complexity of the algorithm, when the time horizon of the system is much larger than the time scale of the algorithm.
+This brings new challenges and opportunities for the online solution to large-scale multi-agent problem design.
+
+\subsection{Novel Approximate MDP Solution Frameworks}
+Throughout this thesis, we leveraged model-based MDP problem modeling and proposed several low-complexity approximate MDP solution frameworks for large-scale multi-agent problems.
+The major contributions of these frameworks could be summarized into two aspects:
+1) approximate value function evaluation, 2) iterative or alternative online policy update.
+The two key ideas lead to the low-complexity solution framework with insightful analytical performance guarantee.
+In this section, we discuss some potential research directions for the approximate MDP solution frameworks.
+
+% \noindent\textbf{Deep Learning Endorsed Online Algorithm Design}
+Recently, there is a trend of integrating deep learning with conventional online algorithm design, which is referred as \emph{online learning}.
+The parameters of the conventional online algorithms are deemed as meta parameters, which can be optimized by deep learning algorithms.
+The online learning algorithms have been widely studied in the literature, such as online convex optimization, online reinforcement learning and etc.
+The deep reinforcement learning (DRL) is a de-facto successful online learning algorithm, which embraces the deep neural network to apply model-free value function approximation and policy optimization.
+However, the model-free DRL algorithms are still lack of theoretical performance guarantee and fail to quickly adapt to the environment change due to the lack of model information.
+Hence, the integration of model-based MDP problem modeling and model-free DRL algorithm design is a promising research direction for the approximate MDP solution frameworks.
+
+% \noindent\textbf{Centralized Training with Decentralized Execution (CTDE)}
+In the recent development of multi-agent reinforcement learning (MARL), the centralized training with decentralized execution (CTDE) paradigm has attracted much attention, which is a promising solution to distributedly cooperation among multiple agents without information sharing.
+In the centralized training phase, a simulated environment is used to share information among agents, while in the decentralized execution phase, each agent chooses an action in accordance with only partially local information.
+It is apparent that the simulated environment could be replaced by an approximated model-based MDP, and hence provide more theoretical performance analysis together with the convergence guarantee.
+
+To conclude, the approximate MDP solution frameworks are still a promising research direction as one promising online solution to large-scale multi-agent systems.
+The integration of deep learning and the CTDE paradigm in MARL are two potential research directions for the approximate MDP solution frameworks.

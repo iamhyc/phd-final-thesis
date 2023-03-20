@@ -1,0 +1,33 @@
+% !TeX root = ../../main.tex
+
+This thesis investigates the dynamic programming algorithm design for various emerging applications of multi-agent edge computing and edge learning systems.
+The common challenge in these applications is how to handle the uncertainties in online decision making.
+The uncertainties are raised by the randomness of job arrivals, transmission latencies, mobility of mobile devices, unknown wireless interference and etc.
+% Moreover, there are many works focusing on the centralized algorithm design for edge computing systems by assuming a central operator with the full knowledge of the system, while the centralized dynamic programming algorithm design is not practical in many edge computing and edge learning scenarios:
+% 1) the full knowledge of the system is hard to obtain due to significant signaling overhead particularly in large-scale systems;
+% 2) the exchanged information is usually outdated due to the random network traffics and random mobility of mobile devices.
+In this thesis, we would like to focus on two specific scenarios of edge computing and edge learning, and shed some light on the decentralized and approximate algorithm design.
+
+In the first part of this thesis, we firstly introduce a centralized cooperative jobs dispatching problem in edge computing systems with multiple access points (APs) and edge servers.
+Due to the uncertain traffic in the network between APs and edge servers, the job uploading delay can not be predicted accurately.
+Since each job dispatching decision will affect the system state in the future, we formulate the joint optimization of jobs dispatching at all the APs as an infinite-horizon Markov decision process (MDP).
+A novel approximate MDP solution framework is proposed via one-step policy iteration over a baseline policy to suppress the curse of dimensionality, where the analytical performance bound can be obtained.
+Furthermore, the decentralized job dispatching problem with random network transmission latency is considered.
+Specifically, the distributed dispatcher on each AP would receive partially and outdated information exchanged via periodic broadcast.
+Hence, we formulate the distributed job dispatching problem by leveraging partially observable Markov decision process (POMDP) and propose a novel approximate MDP solution framework, called {\Dalgname}, to avoid the huge time complexity of conventional POMDP solutions.
+Furthermore, we extend {\Dalgname} to handle a more general scenario where the priori knowledge of the system is absent.
+
+\revise{
+In Part II, we further explore the approximate algorithm design to edge learning scenarios.
+Specifically, we consider both ``network-for-learning'' and ``learning-for-network'' scenarios in multi-agent edge network systems.
+% Specifically, a group of {\IAVFullnames} ({\IAVs}) are moving along their planned routes to collect sensing data and train an object detection model via federated learning.
+Firstly, we choose edge federated learning as a typical scenario for ``network-for-learning'', where the uplink model transmission is well scheduled in a vehicular edge federated learning system to achieve both time and energy efficiency.
+We organize every $N$ time slots in the system as a super slot.
+At the beginning of each super slot, the scheduling period and the global time allocation actions are joint optimized via solving a large-scale convex program.
+Hence, the remaining rate allocation actions is decoupled for each vehicles and the local MDP problems is formulated for each vehicles.
+We further propose a low-complexity algorithm inside each super slot for the local optimization problems.
+Furthermore, we choose indoor Wi-Fi as a typical scenario for ``learning-for-network'', where a learning-based scheduling framework is proposed and implemented to optimize the application-layer quality-of-service (QoS) with cross-layer optimization.
+Specifically, the contention window sizes are adjusted in media access control (MAC) layer, and the throughput of delay-sensitive tasks are throttled in application layer.
+% Due to the unknown interference and vendor-specific implementation of wireless NIC, the relation between the scheduling policy and the system QoS is unknown.
+The experiment results on the commercial-off-the-shelf testbed show that the proposed framework can achieve a significantly better QoS than the conventional EDCA mechanism and other heuristic algorithms.
+}%

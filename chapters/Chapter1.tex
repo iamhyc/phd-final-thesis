@@ -1,0 +1,388 @@
+% !TeX root = ../../main.tex
+
+\chapter{Introduction}
+\label{ch1}
+
+\section{Background and Motivation}
+
+% General Background of Edge Computing
+Due to the rapid development of the Internet of Things (IoT) and the fifth generation (5G) wireless communications, the edge computing is becoming a promising solution to offload the computation burden of the cloud server and reduce the end-to-end communication latency.
+The edge computing is a distributed computing paradigm that brings computation and data storage closer to the location where it is needed, which improves the quality of service (QoS) and conserves the bandwidth \cite{MEC-SURVEY}.
+% General Background of (Vehicular) Edge Learning
+Moreover, with the prosperity of the applications of artificial intelligence (AI) in the Internet of Vehicles (IoV), the edge learning is becoming a promising solution to relieve the communication burden of transmission of terabytes-level dataset collected from vehicular sensors, and enable the possibility of timely model training and deployment in IoV systems \cite{vfl-survey}.
+
+% Decentralized paradigm
+The collaboration of cloud data-center and edge-clouds allows cloud users to freely balance their usages of both technologies to fit their demands.
+The edge servers are deployed in closer proximity to APs than cloud infrastructures, which alleviate the communication overhead and enable the computation of time-sensitive jobs.
+However, the edge servers are usually deployed with limited computation resources.
+There have been a number of works focusing on the resource allocation, job dispatching and service migration of edge computing systems, which address variety of emerging challenges in edge computing systems.
+In the edge computing systems, the job dispatching is the first and demanding scheduling problem to tackled with, where the establishment of efficient cooperation among multiple edge servers is the major challenges.
+Moreover, in the decentralized job dispatching scenario, the signaling latency and latency of distributed information exchange brings more challenges in decision making.
+In the edge learning systems, the resource allocation problem is furthermore addressed.
+Due to the heterogeneity fo computation capabilities and the random mobility of participants, the computation and communication resources should be deliberately allocated to achieve efficient training performance.
+In the following subsections, we shall introduce the details of the aforementioned challenges raised in edge computing and edge learning systems.
+
+\subsection{Challenges in Centralized Job Dispatching for Edge Computing}
+The edge servers are deployed in closer proximity to APs than cloud infrastructures, which alleviate the communication overhead and enable the computation of time-sensitive jobs.
+However, the edge servers are usually deployed with limited computation resources.
+The establishment of efficient cooperation among edge servers is one of the major design challenges, where the global status of multiple users, jobs and edge servers should be jointly considered for optimization of job dispatching.
+
+There have been a number of works considering the centralized job dispatching with updated and complete knowledge on the system states of edge computing systems.
+For example, in order to minimize a weighted sum of total energy consumption and uploading latency, the authors in \cite{ToN-Xuchen2016} proposed a distributed job dispatching algorithm based on game theory to achieve the Nash equilibrium. 
+Considering job migration at edge servers, the authors in \cite{ToN-xujie2018} optimized the edge computing performance in a distributed manner with limited energy resources via a congestion game framework.
+In the scenario that APs cooperatively dispatch jobs with multiple edge servers, the authors in \cite{jcin2020-hong} proposed a novel approximate MDP solution framework to alleviate the algorithm complexity and minimize the average job response time.
+In the above works, a centralized dispatcher with complete and updated knowledge of the system states was assumed in the edge computing systems.
+
+There also have been a number of works considering centralized job dispatcher design with timely and complete knowledge of the system status.
+For example, in edge computing systems with fixed uploading latency, the authors in \cite{tan-online} designed an online algorithm to minimize the average job response time in the worst case.
+In the scenario that BSs and edge servers are connected via software defined network (SDN), the authors in \cite{IOTJ18-FanQ} proposed a heuristic algorithm to dispatch the jobs to the closest edge servers according to geographical locations.
+Considering random jobs arrival, the authors in \cite{mdp-globecom,mdp-tvt} formulate the offloading design to a single edge server as an infinite-horizon Markov decision process (MDP).
+When the jobs can be dispatched to either edge servers or cloud servers, the authors in \cite{MASS18-MengZ} formulated the job dispatching problem as integer linear programming to minimize the total uploading latency. % with fixed uploading latency
+
+\subsection{Challenges in Decentralized Job Dispatching for Edge Computing}
+Since centralized dispatching design might not be suitable for edge computing systems with distributed deployment, the distributed job dispatching is another advanced scenario to be considered.
+Given the signaling overhead and latency of distributed information exchange and decision making, it is usually necessary to dispatch jobs based on partial and outdated global status, and prediction of future global status.
+
+For example, in order to minimize a weighted sum of total energy consumption and uploading latency, the authors in \cite{ToN-Xuchen2016} proposed a distributed job dispatching algorithm based on game theory to achieve the Nash equilibrium. 
+Considering job migration at edge servers, the authors in \cite{ToN-xujie2018} optimized the edge computing performance in a distributed manner with limited energy resources via a congestion game framework.
+In a scenario that APs cooperatively dispatch jobs with multiple edge servers, the authors in \cite{jcin2020-hong} proposed an approximate MDP method to alleviate the computational complexity and minimize the average job response time.
+However, in the above works, the latency of information exchange among APs and edge servers is ignored.
+In fact, due to the complicated network traffic, this latency might be significant, and the staleness and failed transmission of system state information at the dispatcher of edge computing systems should be considered.
+
+The staleness of information sharing among APs and edge servers may degrade the performance of the job dispatching algorithm in edge computing systems.
+The authors in \cite{JSAC17-LyuX} proposed a randomized policy via Lyapunov optimization approach to stabilize the queues in a MEC system with multiple IoT devices offloading jobs to one edge server, where {\brlatency} is considered.
+In \cite{TWC18-LyuX}, the above approach was applied to the scenario that mobile devices offload jobs to each other via D2D link.
+In the above two works, there is one centralized dispatcher in the system, and the objective is to stabilize the transmission queues.
+Hence, the existence of {\brlatency} may not raise a significant challenge to the algorithm design with Lyapunov optimization.
+In fact, the design of distributed dispatchers with {\brlatency} could be more challenging.
+For example, the signaling latencies at distributed dispatchers could be different, and the synchronization of their dispatching decisions becomes infeasible.
+Furthermore, taking the signaling overhead and the possibility of packet loss into consideration, it is of more practical favor to make scheduling decisions based on locally observable system state information, instead of global system state information.
+To our best knowledge, there is no appropriate optimization framework for the distributed dispatcher design with both {\brlatency} and partially observable system state information to date.
+
+\subsection{Challenges in Resource Allocation for Edge Federated Learning}
+With the rising demands of autonomous driving, the edge computing is becoming a promising paradigm to speed up timely model training in autonomous driving, where edge federated learning is leveraged to offload the training tasks at mobile vehicles and only the model parameters are uploaded to the edge servers for aggregation.
+Due to the heterogeneity fo computation capabilities and the random mobility of vehicles, the computation and communication resources should be deliberately allocated to achieve efficient training performance.
+
+Specifically, in a vehicular edge federated learning scenarios, the {\IAVFullnames} ({\IAVs}) are deployed with a variety of multi-modal sensors, e.g., cameras, LiDRAs, Radars, and usually generate the dataset up to Terabytes.
+Since the raw data collected on {\IAVs} is of high redundancy between adjacent time slots, and the online in-vehicle training scheme, i.e., semi-supervised federated learning framework \cite{icra2021-hong}, is desired to suppress cost on the unnecessary cost \cite{vfl-survey}.
+There have been a number of works aiming at reducing job response time by resource allocation and service migration in the edge computing system.
+For example, in \cite{TON19-WangSq}, the edge servers are one-to-one bound to the base stations (BSs), and the job migration could be applied according to users' mobility traces via the backhaul network connecting the BSs.
+However, according to a recent research \cite{INFOCOM19-WuC}, the resource re-allocation for running jobs on servers is hard to implement in practice, as it is hard for jobs migration among heterogeneous edge servers with different resource configurations.
+Hence, it could be more important to optimize the job dispatching strategy at their arrival time.
+
+% low-complexity algorithm with non-trivial performance bound is hard
+Moreover, the metric like job response time could not depict the the model uploading performance for federated learning, where the turn-around time is hindered by the slowest vehicle and and the termination time could not be known in advance.
+There are very limited works \cite{tvt2020-hong,commag2022-hong,tcom2022-hong} consider optimizing the federated training time aware of the mobility of the vehicles.
+Some works assume velocity of vehicles follows independent truncated Gaussian distribution and aimed at minimizing the maximum energy consumption plus delay of the vehicles engaged in model uploading in federated learning.
+In \cite{tvt2020-hong}, the authors proposed a data-driven scheduling framework exploiting the random mobility of vehicles in federated learning model training.
+
+
+%=================================================================================================%
+%=================================================================================================%
+
+\section{Preliminaries}
+Throughout this thesis, we focus on the stochastic dynamics of a wide variety of multi-agent edge computing and edge learning systems.
+To handle the optimization problems emerged in such scenarios of randomness,
+the Markov decision process (MDP) is considered as a fundamental tool to model the stochastic dynamics and formulate the optimization problems.
+Moreover, considering the distributed deployment of edge computing and edge learning systems, the queueing theory always serves as a pivotal role to model the stochastic dynamics and formulate the optimization problems.
+Due to the model simplicity and extensive preliminary works, these two disciplines are deemed as fundamental methodologies to our problem study and algorithm design.
+In this section, we firstly give out the basic knowledge of queueing system theory and Markov decision process.
+% Then, we introduce the inspiration on the principles of approximate dynamic programming (ADP) and reinforcement learning (RL).
+
+\subsection{Queueing Theory}
+Queueing theory is the mathematical study of waiting lines (queues).
+Queueing theory is generally considered a branch of operations research because the results are often used when making business decisions about the resources needed to provide a service.
+The ideas have since seen applications including wireless communications, traffic flow scheduling, computation tasks scheduling and etc.
+In order to completely specify a queueing system, one must identify the stochastic processes that describe the arriving as well as the structure and discipline of the service facility \cite{thomas1976queueing}.
+
+Given any counting process $\set{N(t): t \geq 0}$ of increasing non-negative sequence, let $C_n$ denote the $n$-th customer who will spend $W_n$ time (system waiting time) in the system.
+Meanwhile, let $L(t)$ denote the total number of customers in the system at time $t$.
+The goal of queueing theory is to analyze the statistical properties engaged (e.g., the mean, variance, and distribution) of $W_n$ and $L(t)$.
+Typically, one queueing system is described via the following elements.
+\begin{itemize}
+    \item The inter-arrival process, which describes the stochastic process of the arrival of customers, which is denoted as $A(t)$ with average inter-arrival rate as $\lambda$,
+    $$
+    \lambda \define \lim_{t\to\infty} \frac{N(t)}{t}
+    $$
+    \item The service process, which describes the stochastic process of the service time of customers, which is denoted as $B(t)$ with average departure rate as $\mu$,
+    $$
+    \mu \define \lim_{n\to\infty} \frac{1}{n} \sum_{i=1}^{n} \frac{1}{W_i}
+    $$
+    \item The number of counters (servers) $c$, which describes the number of queues in the queueing system.
+    \item The capacity of the queue $K$, which describes the maximum number of customers in the queue. The $K$ is always omitted in the notation where $k=\infty$ by default.
+    \item The queueing policy, which describes the discipline of the queue. The queueing policy is usually considered as First-Come-First-Serve (FCFS), where the customer who arrives first is served first.
+\end{itemize}
+Hence, the queueing system is usually denoted as $A/B/c/K$ notation, where $A$ denotes the distribution of the inter-arrival time, $B$ denotes the service time, $c$ denotes the number of servers, and $K$ denotes the capacity of the queue.
+
+The Little's law states that the average number of customers in a stable queueing system is equal to the product of the average customer arrival rate $\lambda$ and the average time a customer spends in the system $T$, whatever the distribution of the arrival process and the service process.
+\begin{align*}
+    \bar{N} = \lambda T.
+\end{align*}
+Similarly, the average number of customers in the queue is equal to the product of the average customer arrival rate $\lambda$ and the average time $\bar{W}$ a customer spends in the queue.
+\begin{align*}
+    \bar{N}_q = \lambda \bar{W}.
+\end{align*}
+
+The utility of queueing system is usually considered as the average queueing length or the average waiting time, which is denoted as
+$$
+\rho \define \frac{ \lambda }{ \mu }
+$$.
+The $\rho$ is called the traffic intensity, which is the ratio of the average arrival rate to the average service rate.
+If $\rho < 1$, the queue is considered as stable, i.e., the length of the queue and the waiting time will be bounded.
+Otherwise, the queue is considered as unstable.
+
+The Little's law is widely used in the performance analysis of queueing systems.
+A typical example is the $M/M/1$ queueing system, where both the inter-arrival process and service process are Poisson distribution each with mean as $\lambda$ and $\mu$, respectively.
+Therefore,
+\begin{align*}
+    \bar{N} = \frac{ \rho }{  1- \rho },
+\end{align*}
+which implies that the average number of customers in the system is proportional to the traffic intensity.
+Moreover, the average time in the system is as follows.
+\begin{align*}
+    T &= \frac{ \bar{N} }{ \lambda } = \frac{ 1/\mu }{ 1- \rho }.
+\end{align*}
+
+However, the Little's law is not always practical to fulfil the demand of online task scheduling or resource allocation.
+The capacity of the queue is usually finite, and the penalty of the queue overflow should be highly addressed.
+Moreover, in the non-ideal distributions such as finite-horizon Markov chain, the optimal policy is usually time-variant and non-stationary.
+The statistics like average or variance of the aforementioned queueing system analysis cannot be directly applied to the online scheduling algorithms.
+% The conventional algorithms suffer from the computational complexity and are always intractable to handle real-world problems.
+Hence, it is one of the major challenges to design a low-complexity algorithm for the MDP problems to face the challenges of real-world applications \cite{MEC-SURVEY,tan-online,jieXu2018}.
+
+\subsection{Markov Decision Process}
+Markov decision process (MDP) is a discrete-time or continuous time stochastic control process.
+The MDP is an extension of Markov chain, which is a stochastic process that satisfies the Markovian property
+\begin{align*}
+    \Pr\bracket{ s_{t+1} | s_{t} } = \Pr\bracket{ s_{t+1} | s_{t}, s_{t-1}, \dots, s_{1} },
+\end{align*}
+where $\Pr[\cdot]$ denotes the probability of the occurrence of the inner event.
+
+A Markov decision process is a $4$-tuple $(\Stat, \Action, P, R)$, where
+\begin{itemize}
+    \item $\Stat$ is a set of states called the \emph{state space}; (we denote the set of possible system states by $\mathcal{S}$)
+    \item $\Action$ is a set of actions called the \emph{action space} (alternatively, $\Action_s$ is the set of actions available from state $s$);
+    \item $P(s, s', a) = \Pr(s_{t+1}=s' | s_t=s, a_t=a)$ is the probability that action $a$ in state $s$ at the time $t$ will lead to the state $s'$ at time $t+1$;
+    \item $R(s, s', a)$ is the immediate reward received after transition from state $s$ to state $s'$, due to action $a$. The cost function is usually denoted via $g$.
+\end{itemize}
+A policy function $\Policy$ is a mapping from the state space to the action space, i.e., $\Policy: \Stat \to \Action$.
+The policy function is usually denoted as $\Policy(s)$, which denotes the action taken at state $s$.
+When the mapping is deterministic, we have $\Policy(s) \in \Action_s$ and the policy is called a deterministic policy.
+When the mapping is stochastic, we have $\Policy(s, a) = \Pr(a | s)$ and the policy is called a stochastic policy.
+
+The optimization target of a Markov decision process problem is to find an optimal policy that maximizes the cumulative of random rewards or expected discounted sum of rewards over a potentially finite or infinite horizon.
+Hence, for each state $s \in \Stat$, given the Markov transition matrix composed of $P(s, s', a)$ between adjacent states $s, s'$ under any action $a\in\Action$, the action $a$ is chosen by the policy function $\Policy$ to maximize the following objective function.
+\begin{align*}
+    G(\Policy) = \mathbb{E}_{\Policy}\Bracket{
+        \sum_{t=0}^{T} \gamma^{t} R(s_t, s_{t+1}, a_t) | s_0 = s
+    },
+\end{align*}
+where $\gamma \in (0,1)$ is the discount factor, and $T$ is the horizon of the MDP problem.
+The definition of value function, with average accumulated cost, is given as follows.
+\begin{align*}
+    V\paren{ s } \define \lim_{T\to\infty} \frac{1}{T}
+    \sum_{t=1}^{T} \mathbb{E}_{s_t}\Bracket{
+       g\Paren{ s_{t}, \Policy(s_t) } | s
+    }.
+\end{align*}
+Alternatively, the discounted accumulated cost is defined below with discount factor $\gamma$ ($\gamma \in (0,1)$).
+\begin{align*}
+    V\paren{ s } \define \lim_{T\to\infty}
+    \sum_{t=1}^{T} \mathbb{E}_{s_t}\Bracket{
+        \gamma^{t-1} g\Paren{ s_t, \Policy(s_t) } | s
+    }.
+\end{align*}
+The non-discounted cost considers the cost in future with a uniform weight, and may leads to infinity with inappropriate policy definition.
+The discounted cost diminishes the weight of future cost, which put more weight on the current cost and is more practical in real-world applications.
+
+The optimal policy is defined as the policy that maximizes the value function, i.e., $\Policy^* = \arg\max_{\Policy} V(s)$.
+The optimal value function is denoted as $V^*(s)$.
+The Bellman's Equation is the optimal condition for the optimal policy of an MDP problem.
+For the average accumulated cost, the Bellman's equation is given as follows.
+\begin{align*}
+    V\paren{ s_t } = \min\limits_{ \Policy(s_t) } \mathbb{E}_{s_{t+1}} \Bracket{
+        g\Paren{ s_t, \Policy(s_t) } + V(s_{t+1}) | s_t
+    },
+\end{align*}
+and the form of the discounted one is given as
+\begin{align*}
+    V\paren{ s_t } = \min\limits_{ \Policy(s_t) } \mathbb{E}_{s_{t+1}} \Bracket{
+        g\Paren{ s_t, \Policy(s_t) } + \gamma V(s_{t+1}) | s_t
+    }.
+\end{align*}
+
+Considering the finite-horizon MDP, the above definition is a little bit different.
+Firstly, the definition of policy is indexed with timestamp as $\Policy_t(s_t)$, which implies that the optimal policy is time-variant and non-stationary.
+Moreover, the cost function (similar to reward function) is also index as $g_t(\cdot)$.
+Given the horizon of $T$, the value functions are defined as
+\begin{align*}
+    V_t(s_t) = \mathbb{E}_{s_1,\dots,s_t} \Bracket{
+        \sum_{\tau=1}^{t} g_{t}\Paren{ s_t, \Policy_t(s_t) } | s_1
+    },~~t=1,\dots,T,
+\end{align*}
+and the corresponding Bellman's equations are
+\begin{align*}
+    V_t(s_t) = \min\limits_{ \Policy_{t}(s_t) } g_{t}\Paren{s_t, \Policy_t(s_t)}
+                + \sum_{s_{t+1}} \Pr\Bracket{ s_{t+1} | s_t, \Policy_t(s_t) } \cdot V_{t+1}(s_{t+1}),
+                ~~t=1,\dots,T.
+\end{align*}
+
+The conventional algorithms solve the MDP optimization problem by leveraging the Bellman's equations in an iterative manner \cite{sutton2018reinforcement}.
+The two well-known algorithms are the \emph{policy iteration} and \emph{value iteration}, which adopt the Bellman's equations as the update rules.
+The idea behind those algorithms is straightforward: once the optimal policies $\Policy^*$ is obtained, the corresponding value function $V^*(s)$ or $Q^*(s, a)$ (namely action-value function) is also obtainable via the Bellman's equations.
+Hence, we firstly introduce how to evaluate the value function with arbitrary policy $\Policy$. The process is called \emph{policy evaluation}.
+
+\noindent\textbf{Policy Evaluation}
+Given an arbitrary policy $\Policy$, the corresponding value function $V^{\Policy}(s)$ is obtained by updating a sequence of approximate value functions denoted as $v_0, v_1, v_2, \dots$, where the initial $v_0$ is chosen arbitrarily.
+The sequence is updated according to the Bellman's equation as follows.
+\begin{align*}
+    v_{k+1}(s) = \sum_{a} \sum_{s'} \Pr\paren{ s' | s, \Policy(s) }\bracket{ r + \gamma v_{k}(s') }.
+\end{align*}
+The sequence converges to a fixed point which is guaranteed to be the unique solution of $V^{\Policy}$.
+The convergence also implies the feasibility of policy $\Policy$.
+The policy evaluation is usually considered as a sweep of the state space, which is also called \emph{full backup} in the context of reinforcement learning.
+Then, the process called \emph{policy improvement} is applied to the evaluated value function, which is summarized as follows.
+
+\noindent\textbf{Policy Improvement}
+To improve a policy $\Policy$, the policy improvement step is applied with greedy policy generated based on the evaluated value function, which takes the action that looks best in the fort term, i.e., one step look-ahead according to $V^{\Policy}$.
+\begin{align*}
+    \Policy'(s) &\define \arg\max_{a} Q^{\Policy}(s,a)
+    \nonumber\\
+    &= \arg\max_{a} \sum_{s} \Pr\Paren{ s' | s, \Policy(s) } \Bracket{ r + \gamma V_{\Policy}(s') }.
+\end{align*}
+
+Thus, the Policy Iteration (PI) algorithm combines the \emph{policy evaluation} and \emph{policy improvement} steps and applies alternatively as follows.
+\begin{align*}
+    \Policy_0 \xrightarrow{E} V^{\Policy_0} \xrightarrow{I} \Policy_1
+        \xrightarrow{E} V^{\Policy_1} \xrightarrow{I} \Policy_2
+        \xrightarrow{E} \dots     \xrightarrow{I} \Policy^*
+        \xrightarrow{E} V^*.
+\end{align*}
+The policy iteration algorithm is guaranteed to converge to the optimal policy and optimal value function in a finite number of iterations.
+
+The Value Iteration (VI) algorithm is usually considered as a special case of the policy iteration algorithm, which is usually considered as a heuristic algorithm.
+The Value Iteration (VI) algorithm truncates the policy evaluation step without losing the convergence guarantees of policy iteration, which effectively combines the sweep of policy evaluation and policy improvement.
+It can be writing as a particularly simple update operation that combines the policy improvement and truncated policy evaluation steps as follows ($\forall s\in\Stat$).
+\begin{align*}
+    V_{k+1}(s)
+    &\define \max_{a} \mathbb{E}\Bracket{
+        R_{t+1} + \gamma V_{k}(s_{t+1}) | s_t=s, A_t=a
+    }
+    \nonumber\\
+    &= \max_{a} \sum_{s'} p(s'| s, a) \Bracket{
+        r + \gamma V_{k}(s')
+    }.
+\end{align*}
+For arbitrary $V_0$, the sequence of $V_k$ can be shown to converge to $V^*$ under the same conditions that guarantee the existence of $v_*$.
+
+However, either the policy iteration algorithm or the value iteration algorithm is usually computationally expensive, as it requires a full backup of the state space in each iteration.
+It suffers from "curse of dimensionality" , which means that its computational requirements grow exponentially with the number of state variables.
+Moreover, the storage space is also an important constraint, where a large amount of memory is required to build approximations for value functions, policies and assembled in the tabular manner (the corresponding methods are called tabular methods).
+The computational complexity is usually considered as the major challenge of the conventional algorithms to handle real-world problems.
+Hence, the approximate dynamic programming (ADP) is proposed to address the computational complexity issue.
+
+\noindent\textbf{Approximate Dynamic Programming}
+Recent works have shown that the approximate dynamic programming (ADP) is a promising way to handle the curse of dimensionality.
+The ADP is a family of methods that use function approximators to represent the value functions and policies.
+The conventional ADP methods are usually based on state space aggregation or linear function approximators, which are usually considered as the linear combination of features.
+The function approximators are usually parameterized by a vector of weights $\vec{w} \in \domR^d$, and the approximate value function is accordingly denoted as $\tilde{V}^{\Policy}(s, \vec{w})$ under policy $\Policy$.
+For example of linear function approximators, the approximate value function is denoted as $\tilde{V}^{\Policy}(s, \vec{w}) = \vec{w}^\mathsf{T} \vec{x}(s)$, where $\vec{x}(s)$ is a vector of features of state $s$.
+The features are usually chosen as the basis functions, which are usually chosen as the basis functions, e.g., Fourier basis, polynomial basis, radial basis, and etc.
+The chosen appropriate basis functions are usually problem-specific and add prior knowledge to the problem.
+The stochastic gradient descent (SGD) is usually applied to update the weights $\vec{w}$, where a series of samples indexed by $i=0,1,2,\dots$ are randomly drawn to minimize a mean squared error (MSE) loss function.
+\begin{align*}
+    \vec{w}_{i+1} &= \vec{w}_{i} - 1/2 \alpha \nabla \Paren{
+        \tilde{V}^{\Policy}(s_i, \vec{w}_i) - V^{\Policy}(s_i)
+    }^2
+    \\
+    &= \vec{w}_{i} + \alpha \Paren{
+        \tilde{V}^{\Policy}(s_i, \vec{w}_i) - V^{\Policy}(s_i)
+    } \nabla \tilde{V}^{\Policy}(s_i, \vec{w})
+\end{align*}
+where $\alpha$ is the learning rate.
+
+In a recent work \cite{tnet2022-hong}, the authors consider directly linear approximation of the decomposition of the value function, which greatly reduces the computational complexity of policy evaluation and thus improves the convergence speed of the policy iteration algorithm.
+Leveraging those ideas of value function approximation, the Rollout algorithm could be further integrated to the ADP framework.
+The Rollout algorithm is a one-step look-ahead algorithm, which is a special case of the policy iteration algorithm.
+In the Rollout algorithm, the policy evaluation step is truncated to one step, which is also referred as \emph{sample backup} in the context of reinforcement learning.
+In the recent works such as \cite{Lv2018-icc,Lv2018-gc,Lv2019,}, the rollout-based value function approximation is proposed to handle the curse of dimensionality.
+
+
+% \subsection{Reinforcement Learning}
+
+
+%=================================================================================================%
+%=================================================================================================%
+
+
+\section{Thesis Overview}
+In this thesis, we discuss both the theorems and the applications of the distributed and approximate dynamic programming algorithm design for edge computing and edge learning systems.
+The outline of this thesis is summarized as follows.
+In Chapter \ref{ch3_prev}, a centralized job dispatching problem in edge computing networks is firstly introduced.
+In Chapter \ref{ch3}, the aforementioned centralized problem is extended to a decentralized job dispatching problem in edge computing networks. Furthermore, the staleness of information sharing among access points (APs) and edge servers is considered.
+In Chapter \ref{ch2}, we focus on the edge federated learning problem in the edge computing networks with mobile vehicles.
+Finally, we conclude the thesis and discuss about the potential future works in Chapter \ref{ch4}.
+In Chapter \ref{ch3_after}, we explore how to leverage edge reinforcement learning to improve the application-layer quality-of-service (QoS) in a IEEE 802.11 WLAN system.
+\revise{
+    More specifically, Chapter \ref{ch3_prev} and \ref{ch3} focus on the pivotal job dispatching problem in multi-agent edge computing systems, while Chapter \ref{ch2} and \ref{ch3_after} focus on the communication resource scheduling problem in edge learning systems.
+    The main contributions of each part are summarized as follows.
+}%
+
+\indent\textbf{Part \ref{part_1}: Low-complexity Algorithm Design for Multi-agent Edge Computing Systems}
+
+In this part, we focus on the jobs dispatching optimization between multiple access points (APs) and edge servers via a network with random job uploading delay.
+In Chapter 2, we firstly shed some lights on the above issue by optimizing the job dispatching from multiple APs to multiple edge servers via a network with unpredictable uploading delay.
+The problem is formulated as an infinite-horizon Markov decision process (MDP) problem, an approximate dynamic programming (ADP) algorithm is proposed to solve the problem.
+\begin{itemize}
+    \item We formulate the joint optimization of job dispatching in all the APs and time slots as an infinite-horizon MDP, where the minimization objective is a discounted measurement of job processing time, including the uploading delay, the waiting time and the computation time  at
+        edge servers. The issue of random uploading delay and computation time is addressed via the state transition distribution of MDP formulation.
+    \item Conventional MDP problems suffer from \emph{curse of dimensionality}.
+    In order to address this issue, a novel approach of value function approximation is proposed for the above infinite-horizon MDP with discounted cost, where the expressions of approximated value function is derived. Hence, the complicated value iteration is avoided. Moreover, with this new approach, the performance of the proposed dispatching algorithm can be analytically bounded. 
+\end{itemize}
+
+Furthermore, in Chapter 3, we consider a practical scenario where the APs cooperatively upload different types of jobs to different edge servers with random uploading latency, and the APs receive the partial system state information suffering from random signaling latency (i.e., the global system state is always partially available and outdated at the APs).
+The problem is formulated as an infinite-horizon decentralized POMDP problem, and a low-complexity alternative update algorithm is proposed to solve the problem.
+We address the above challenges by leveraging a partially observable Markov decision process (POMDP) problem formulation, and a novel low-complexity approximate MDP solution framework is proposed.
+\begin{itemize}
+    \item The distributed and cooperative job dispatching design with outdated and partial information is formulated as a POMDP problem.
+    Different from the conventional value or policy iteration of the Bellman's equations where global or historical system states are requested in numerical calculation, a novel low-complexity approximate MDP solution framework via \emph{alternative policy iteration} is proposed, where the dispatching policies of all APs are updated distributedly and alternatively based on the {closed-form expression} of the approximate local value function.
+    Thus, the conventional complicated POMDP solution is avoided.
+    \item Both analytical performance lower bound and tighter semi-analytical lower bound are derived for the proposed distributed dispatching policy. In the conventional approximate MDP methods, the performance is usually evaluated numerically.
+    The lower bounds not only justify the reliability of the proposed policy but also provide a method of quick performance evaluation.
+    \item We extend our solution framework {\Dalgname} with an efficient online learning approach to evaluate the approximate value function when the priori knowledge of the system randomness is absent.
+    \item We conduct extensive simulations based on the Google Cluster trace, compared with three heuristic benchmarks. The evaluation results show that {\Dalgname} can achieve as high as $20.67\%$ reduction in average job response time and consistently perform well under various parameter settings of signaling latency, job arrival intensity and job processing time. {Moreover, the online learning algorithm converges fast.}
+\end{itemize}
+
+\indent\textbf{Part \ref{part_2}: Low-complexity Algorithm Design for Multi-agent Edge Learning Systems}
+
+In this part, we focus on the communication resource scheduling problem in edge learning systems.
+Specifically, we consider both ``network-for-learning'' and ``learning-for-network'' scenarios in multi-agent edge network systems. The typical scenarios of vehicular edge federated learning and indoor WLAN systems are chosen for the topics, respectively.
+
+In Chapter 4, we particularly consider the scenario of in-vehicle federated learning, and propose a data-driven optimization framework, namely {\fwName}, for scheduling of the model uploading.
+The {\fwName} aims to exploit the statistical knowledge on the trajectories of vehicles and provide a low-complexity scheduling solution with a good performance.
+We extend the aforementioned idea of AMDP to formulate the problem as a finite-horizon MDP problem, and propose a two-timescale solution framework to reduce the computational complexity.
+\begin{itemize}
+    \item We develop the {\fwName} simulator to obtain high-fidelity trajectory dataset of {\IAVs} for customizable traffic scenarios, such that the random trajectories of vehicles can be modelled as Markov chains via statistical learning and predicted in online scheduling. Thus, our algorithm design is based on the high-fidelity traffic statistics.
+    \item We propose a two-time-scale algorithm, namely {\fwName} optimizer, to find a sub-optimal policy with low complexity. Moreover, the scheduling according to {\fwName} optimizer is with a non-trivial analytical performance bound. The simulation results show that the {\fwName} optimizer outperforms various baselines under different settings, and achieves good balance between computational complexity and optimality.
+\end{itemize}
+
+\revise{
+    In Chapter 5, we would like to shed some light on the RL-based scheduling design for commercial-off-the-shelf (COTS) IEEE 802.11 systems suffering from unknown co-channel interference.
+    A learning-based framework for the application-layer QoS Optimization, namely {\algName}, is proposed for the scheduling of delay-sensitive communication tasks and file delivery tasks.
+    In the framework,
+    \begin{itemize}
+        \item We deploy a centralized controller which periodically collects the average QoS observations of all the application-layer tasks, and leverage a novel Q-network to determine the communication scheduling for all the transmitters.
+        \item We build up the COTS testbed and prove that our framework is IEEE 802.11-compatible. The experiment results show that the proposed framework can adapt to the variation of task number, interference traffic and link quality, and significantly outperforms the conventional EDCA mechanism.
+    \end{itemize}
+}%
+
+Throughout the thesis, we use the following notations:
+non-bold letters (e.g., $a, A$) are used to denote scalar values,
+bold lowercase letters (e.g., $\vec{a}$) to denote column vectors,
+bold uppercase letters (e.g., $\mat{A}$) to denote matrices,
+and calligraphic letters (e.g., $\mathcal{A}$) to denote sets.
+$\lceil a \rceil$ is the smallest integer not smaller than $a$.
+$(\mat{A})_{i,j}$ denotes the $(i,j)$-th entry of the matrix $\mat{A}$ and $\mat{A}^\mathsf{T}$ denotes its transpose.
+$[a_{j}]_{j}$ with $j\in \mathcal{J}$ denotes the column vector whose entries' indexes take values from sets $\mathcal{J}$ in ascending order; $[a_{i,j}]_{i,j}$ with $i\in \mathcal{I}$ and  $j\in \mathcal{J}$ denotes the matrix.
+$\|{\vec{a}}\|_2$ denote the L2-norm of vector $\vec{a}$.
+$\indicator[\cdot]$ is the indicator function which is equal to $1$ when the inner statement is true and $0$ otherwise.
